@@ -12,6 +12,7 @@ export type AnnouncementLog = {
   transactionHash: `0x${string}`;
   schemeId: bigint;
   stealthAddress: `0x${string}`;
+  initiator: `0x${string}`;
   ephemeralPubKey: `0x${string}`;
   metadata: `0x${string}`;
   isMine?: boolean;
@@ -71,9 +72,9 @@ export async function getAnnouncements(
     console.log(`Scanning recent blocks: ${fromBlock} to latest`);
   }
 
-  // Announcement event signature
+  // Announcement event signature (matches StealthHelper.sol)
   const announcementEvent = parseAbiItem(
-    "event Announcement(uint256 indexed schemeId, address indexed stealthAddress, bytes ephemeralPubKey, bytes metadata)"
+    "event Announcement(uint256 indexed schemeId, address indexed stealthAddress, address indexed initiator, bytes ephemeralPubKey, bytes metadata)"
   );
 
   const logs = await client.getLogs({
@@ -88,6 +89,7 @@ export async function getAnnouncements(
     transactionHash: log.transactionHash,
     schemeId: log.args.schemeId!,
     stealthAddress: log.args.stealthAddress!,
+    initiator: log.args.initiator!,
     ephemeralPubKey: log.args.ephemeralPubKey! as `0x${string}`,
     metadata: log.args.metadata! as `0x${string}`,
   }));

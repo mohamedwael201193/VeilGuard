@@ -14,7 +14,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getChainConfig, isSpecMode } from "@/lib/contracts";
-import { generateInvoiceLink, generatePaymentURI } from "@/lib/eip681";
+import {
+  generateInvoiceLink,
+  generatePaymentLink,
+  generatePaymentURI,
+} from "@/lib/eip681";
 import {
   generateReceiptLink,
   makeCommitment,
@@ -126,8 +130,26 @@ export default function InvoiceView() {
     setIsMarking(true);
 
     try {
-      // Prompt user for transaction hash
-      const txHash = prompt("Enter the payment transaction hash (0x...):");
+      // Try to get stored payment tx hash from localStorage
+      const invoiceKey = `invoice_payment_${invoice.id}`;
+      const storedPayment = localStorage.getItem(invoiceKey);
+      let suggestedTxHash = "";
+
+      if (storedPayment) {
+        try {
+          const payment = JSON.parse(storedPayment);
+          suggestedTxHash = payment.txHash || "";
+        } catch (e) {
+          console.error("Error parsing stored payment:", e);
+        }
+      }
+
+      // Prompt user for transaction hash with auto-filled value if available
+      const txHash = prompt(
+        "Enter the payment transaction hash (0x...):" +
+          (suggestedTxHash ? `\n\nAuto-detected: ${suggestedTxHash}` : ""),
+        suggestedTxHash
+      );
 
       if (!txHash || !txHash.startsWith("0x")) {
         toast.error("Invalid transaction hash");
@@ -456,6 +478,21 @@ export default function InvoiceView() {
 
   const invoiceLink = generateInvoiceLink(invoice.id);
 
+  // Generate user-friendly payment link for customers
+  const paymentLink =
+    invoice.stealthAddress && invoice.ephemeralPubKey
+      ? generatePaymentLink(
+          invoice.id,
+          invoice.stealthAddress,
+          invoice.amount,
+          tokenConfig.address,
+          invoice.ephemeralPubKey,
+          chainId,
+          "VeilGuard Merchant",
+          `Invoice #${invoice.id.slice(0, 8)}`
+        )
+      : "";
+
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied!`);
@@ -579,9 +616,35 @@ export default function InvoiceView() {
                     </div>
                   </div>
 
+                  {paymentLink && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        🔗 Payment Link (Share with Customer)
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs bg-muted p-2 rounded flex-1 truncate font-mono">
+                          {paymentLink}
+                        </code>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            copyToClipboard(paymentLink, "Payment Link")
+                          }
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        ✨ Customers can pay directly from this link with full
+                        privacy
+                      </p>
+                    </div>
+                  )}
+
                   <div>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Invoice Link
+                      Invoice Link (For Merchants)
                     </p>
                     <div className="flex items-center gap-2">
                       <code className="text-xs bg-muted p-2 rounded flex-1 truncate font-mono">
@@ -599,8 +662,18 @@ export default function InvoiceView() {
                 </div>
 
                 <div className="pt-4 space-y-2">
+                  {paymentLink && (
+                    <Button
+                      className="w-full magnetic bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white glow-lime"
+                      onClick={() => window.open(paymentLink, "_blank")}
+                      disabled={invoice.status === "paid"}
+                    >
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Open Payment Page
+                    </Button>
+                  )}
                   <Button
-                    className="w-full magnetic bg-primary hover:bg-primary/90 glow-lime"
+                    className="w-full magnetic bg-primary hover:bg-primary/90"
                     onClick={() => window.open(paymentURI, "_blank")}
                     disabled={invoice.status === "paid"}
                   >
