@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "contracts:build",
+      "type": "shell",
+      "command": "cd contracts && npx hardhat compile",
+      "problemMatcher": []
+    },
+    {
+      "label": "contracts:deploy:amoy",
+      "type": "shell",
+      "command": "cd contracts && npx hardhat run --network amoy scripts/deploy.js",
+      "problemMatcher": []
+    },
+    {
+      "label": "contracts:deploy:polygon",
+      "type": "shell",
+      "command": "cd contracts && npx hardhat run --network polygon scripts/deploy.js",
+      "problemMatcher": []
+    },
+    {
+      "label": "contracts:export-abi",
+      "type": "shell",
+      "command": "cd contracts && npm run export-abi",
+      "problemMatcher": []
+    },
+    {
+      "label": "web:dev",
+      "type": "shell",
+      "command": "cd web && npm run dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "web:build",
+      "type": "shell",
+      "command": "cd web && npm run build",
+      "problemMatcher": []
+    }
+  ]
+}
