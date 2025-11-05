@@ -29,5 +29,13 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+
+# Documentation (internal)
+docs/
 DEPLOYMENT_CHECKLIST.md
 VERCEL_DEPLOYMENT.md
+AKINDO_SUBMISSION.md
+AKINDO_WAVE_SUBMISSION.txt
+
+# Keep these visible
+!WAVE2_COMPLETE_DOCUMENTATION.md
