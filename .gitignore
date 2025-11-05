@@ -29,3 +29,5 @@ yarn-error.log*
 *.swp
 *.swo
 *~
+DEPLOYMENT_CHECKLIST.md
+VERCEL_DEPLOYMENT.md
