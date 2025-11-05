@@ -1,256 +1,383 @@
-import { motion } from 'framer-motion';
-import { Shield, Zap, Lock, TrendingUp, Network, AlertTriangle, Wallet, Users, Database } from 'lucide-react';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { Badge } from '@/components/ui/badge';
-
-const waves = [
-  {
-    number: 2,
-    title: 'Mainnet Private Invoices',
-    period: 'Nov 4–18, 2025',
-    status: 'current',
-    icon: Shield,
-    color: 'primary',
-    features: [
-      'Stealth address payments on Polygon PoS',
-      'Verified smart contracts',
-      'Public stats dashboard',
-      'USDC payment support',
-    ],
-  },
-  {
-    number: 3,
-    title: 'Katana APR & vbPaymaster',
-    period: 'Nov 19–Dec 3, 2025',
-    status: 'planned',
-    icon: Zap,
-    color: 'violet',
-    features: [
-      'Katana APR widget integration',
-      'vbPaymaster alpha release',
-      'Basic Shield compliance checks',
-      'Multi-token support expansion',
-    ],
-  },
-  {
-    number: 4,
-    title: 'zk-Receipt V1',
-    period: 'Dec 4–18, 2025',
-    status: 'planned',
-    icon: Lock,
-    color: 'cyan',
-    features: [
-      'Noir-based zero-knowledge proofs',
-      'Privacy-aware refund system',
-      'Verifiable receipt generation',
-      'Receipt verification API',
-    ],
-  },
-  {
-    number: 5,
-    title: 'RWA Attestations',
-    period: 'Dec 19, 2025–Jan 2, 2026',
-    status: 'planned',
-    icon: TrendingUp,
-    color: 'primary',
-    features: [
-      'Real-world asset linking',
-      'Verifier staking mechanism',
-      'Enhanced attestation system',
-      'Cross-chain verification',
-    ],
-  },
-  {
-    number: 6,
-    title: 'AggLayer & AgentPay',
-    period: 'Jan 3–17, 2026',
-    status: 'planned',
-    icon: Network,
-    color: 'violet',
-    features: [
-      'AggLayer routing integration',
-      'AgentPay SDK release',
-      'Multi-chain payment flows',
-      'Developer documentation',
-    ],
-  },
-  {
-    number: 7,
-    title: 'Fraud Shield V2',
-    period: 'Jan 18–Feb 1, 2026',
-    status: 'planned',
-    icon: AlertTriangle,
-    color: 'cyan',
-    features: [
-      'Advanced fraud detection',
-      'Risk assessment dashboard',
-      'Merchant protection tools',
-      'Automated dispute resolution',
-    ],
-  },
-  {
-    number: 8,
-    title: 'Treasury Agent V2',
-    period: 'Feb 2–16, 2026',
-    status: 'planned',
-    icon: Wallet,
-    color: 'primary',
-    features: [
-      'AI-powered treasury management',
-      'Strategy marketplace',
-      'Yield optimization',
-      'Risk-adjusted returns',
-    ],
-  },
-  {
-    number: 9,
-    title: 'Multi-Merchant Pilots',
-    period: 'Feb 17–Mar 3, 2026',
-    status: 'planned',
-    icon: Users,
-    color: 'violet',
-    features: [
-      'Enterprise merchant onboarding',
-      'Compliance memo system',
-      'Multi-signature support',
-      'Advanced analytics',
-    ],
-  },
-  {
-    number: 10,
-    title: 'CDK Validium Scale',
-    period: 'Mar 4–18, 2026',
-    status: 'planned',
-    icon: Database,
-    color: 'cyan',
-    features: [
-      'CDK validium deployment roadmap',
-      'Scaling strategy implementation',
-      'Performance optimization',
-      'Production readiness assessment',
-    ],
-  },
-];
-
-const statusConfig = {
-  current: {
-    badge: 'In Progress',
-    badgeClass: 'bg-primary/10 text-primary border-primary',
-  },
-  planned: {
-    badge: 'Planned',
-    badgeClass: 'bg-muted text-muted-foreground',
-  },
-};
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { waves } from "@/data/roadmap";
+import type { Wave, WaveStatus } from "@/types/roadmap";
+import {
+  CheckCircle,
+  Link as LinkIcon,
+  Shield,
+  TrendingUp,
+} from "lucide-react";
+import React from "react";
 
 export default function Roadmap() {
+  const [statusFilter, setStatusFilter] = React.useState<
+    "All" | WaveStatus | "All"
+  >("All");
+
+  const filteredWaves = waves.filter((wave) => {
+    if (statusFilter === "All") return true;
+    return wave.status === statusFilter;
+  });
+
+  const scrollToWave = (waveId: string) => {
+    const element = document.getElementById(waveId);
+    element?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const copyLinkToWave = (waveId: string) => {
+    const url = `${window.location.origin}${window.location.pathname}#${waveId}`;
+    navigator.clipboard.writeText(url);
+  };
+
+  const getStatusColor = (status: WaveStatus) => {
+    switch (status) {
+      case "Done":
+        return "bg-green-500/10 text-green-400 border-green-500/30";
+      case "In Progress":
+        return "bg-amber-500/10 text-amber-400 border-amber-500/30";
+      case "Planned":
+        return "bg-slate-500/10 text-slate-400 border-slate-500/30";
+    }
+  };
+
+  const getProgressPercent = (wave: Wave) => {
+    const done = wave.deliverables.filter((d) => d.done).length;
+    return Math.round((done / wave.deliverables.length) * 100);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900">
       <Header />
-      
-      <main className="flex-1 py-12">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-12"
-          >
-            {/* Header */}
-            <div className="text-center space-y-4">
-              <h1 className="text-5xl font-bold">Development Roadmap</h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                VeilGuard's journey from private invoices to full-stack privacy infrastructure
-              </p>
+      <main className="container mx-auto px-4 py-16">
+        <div className="max-w-5xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-bold text-white mb-6">
+              VeilGuard Roadmap
+            </h1>
+            <p className="text-xl text-slate-300 mb-8">
+              Building privacy-preserving payments for the real world
+            </p>
+
+            {/* Status Filter */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+              <span className="text-sm text-slate-400">Filter by status:</span>
+              {["All", "Done", "In Progress", "Planned"].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setStatusFilter(status as typeof statusFilter)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    statusFilter === status
+                      ? "bg-purple-600 text-white"
+                      : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
             </div>
 
-            {/* Timeline */}
-            <div className="relative">
-              {/* Vertical line */}
-              <div className="absolute left-8 top-0 bottom-0 w-px bg-border hidden md:block" />
+            {/* Legend */}
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-slate-400">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-green-400"></div>
+                <span>Done</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-amber-400"></div>
+                <span>In Progress</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-slate-400"></div>
+                <span>Planned</span>
+              </div>
+            </div>
+          </div>
 
-              <div className="space-y-8">
-                {waves.map((wave, index) => {
-                  const Icon = wave.icon;
-                  const statusInfo = statusConfig[wave.status];
+          {/* Sticky Timeline Navigation */}
+          <div className="sticky top-0 z-10 bg-slate-900/80 backdrop-blur-sm border-y border-purple-500/20 py-3 mb-8">
+            <div className="flex items-center justify-center gap-2 overflow-x-auto">
+              {waves.map((wave) => (
+                <button
+                  key={wave.id}
+                  onClick={() => scrollToWave(wave.id)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap transition-colors"
+                >
+                  Wave {wave.number}
+                </button>
+              ))}
+            </div>
+          </div>
 
-                  return (
-                    <motion.div
-                      key={wave.number}
-                      initial={{ opacity: 0, x: -50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.05 }}
-                      className="relative"
-                    >
-                      <div className="flex gap-6 items-start">
-                        {/* Icon */}
-                        <div className="hidden md:flex relative z-10 shrink-0">
-                          <div className={`glass p-4 rounded-lg border-2 ${
-                            wave.status === 'current' ? 'border-primary glow-lime' : 'border-border'
-                          }`}>
-                            <Icon className={`h-6 w-6 text-${wave.color}`} />
-                          </div>
+          {/* Wave Cards */}
+          <div className="space-y-8">
+            {filteredWaves.map((wave) => {
+              const progressPercent = getProgressPercent(wave);
+              return (
+                <Card
+                  key={wave.id}
+                  id={wave.id}
+                  className="bg-slate-800/50 backdrop-blur-sm border-purple-500/20"
+                >
+                  <CardHeader>
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
+                          {wave.number}
                         </div>
-
-                        {/* Content */}
-                        <div className="flex-1 glass p-6 rounded-lg space-y-4 hover:glow-lime transition-all border-l-4 border-l-primary">
-                          <div className="flex flex-wrap items-start justify-between gap-4">
-                            <div>
-                              <div className="flex items-center gap-3 mb-2">
-                                <Badge className={statusInfo.badgeClass}>
-                                  {statusInfo.badge}
-                                </Badge>
-                                <span className="text-sm text-muted-foreground">
-                                  {wave.period}
-                                </span>
-                              </div>
-                              <h3 className="text-2xl font-bold">
-                                Wave {wave.number}: {wave.title}
-                              </h3>
-                            </div>
-                          </div>
-
-                          <ul className="space-y-2">
-                            {wave.features.map((feature, i) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <span className="text-primary mt-1">•</span>
-                                <span className="text-muted-foreground">{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
+                        <div>
+                          <CardTitle className="text-white text-lg">
+                            Wave {wave.number}: {wave.title}
+                          </CardTitle>
+                          <p className="text-sm text-slate-400 mt-1">
+                            {wave.dateRange}
+                          </p>
                         </div>
                       </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
+                      <button
+                        onClick={() => copyLinkToWave(wave.id)}
+                        className="text-slate-400 hover:text-slate-300 transition-colors"
+                        title="Copy link to this wave"
+                      >
+                        <LinkIcon className="h-4 w-4" />
+                      </button>
+                    </div>
 
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="glass p-8 rounded-lg text-center space-y-4"
-            >
-              <h2 className="text-2xl font-bold">Stay Updated</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Follow our progress as we build the future of private payments. 
-                Join our community to get notified about new releases and features.
+                    <div className="flex items-center gap-3 mt-3">
+                      <Badge
+                        className={`${getStatusColor(wave.status)} border`}
+                      >
+                        {wave.status}
+                      </Badge>
+                      {wave.deliverables.length > 0 && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <Progress
+                            value={progressPercent}
+                            className="w-24 h-2"
+                          />
+                          <span className="text-slate-400 text-xs">
+                            {progressPercent}% (
+                            {wave.deliverables.filter((d) => d.done).length}/
+                            {wave.deliverables.length})
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent>
+                    <Accordion type="multiple" className="w-full">
+                      {/* Objectives */}
+                      {wave.objectives.length > 0 && (
+                        <AccordionItem value="objectives">
+                          <AccordionTrigger className="text-white">
+                            Objectives
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.objectives.map((obj, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <span className="text-purple-400 mt-1">
+                                    •
+                                  </span>
+                                  <span>{obj}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* Deliverables */}
+                      {wave.deliverables.length > 0 && (
+                        <AccordionItem value="deliverables">
+                          <AccordionTrigger className="text-white">
+                            Deliverables
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.deliverables.map((del, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-3"
+                                >
+                                  {del.done ? (
+                                    <CheckCircle className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                                  ) : (
+                                    <div className="h-5 w-5 rounded-full border-2 border-slate-500 mt-0.5 flex-shrink-0" />
+                                  )}
+                                  <span className="text-slate-300">
+                                    {del.label}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* Acceptance Criteria */}
+                      {wave.acceptanceCriteria.length > 0 && (
+                        <AccordionItem value="acceptance">
+                          <AccordionTrigger className="text-white">
+                            Acceptance Criteria
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.acceptanceCriteria.map((ac, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <Shield className="h-4 w-4 text-purple-400 mt-1 flex-shrink-0" />
+                                  <span>{ac}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* Dependencies */}
+                      {wave.dependencies && wave.dependencies.length > 0 && (
+                        <AccordionItem value="dependencies">
+                          <AccordionTrigger className="text-white">
+                            Dependencies
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.dependencies.map((dep, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <span className="text-slate-500 mt-1">→</span>
+                                  <span>{dep}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* Risks */}
+                      {wave.risks && wave.risks.length > 0 && (
+                        <AccordionItem value="risks">
+                          <AccordionTrigger className="text-white">
+                            Risks
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.risks.map((risk, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <span className="text-amber-400 mt-1">⚠</span>
+                                  <span>{risk}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* Demo Plan */}
+                      {wave.demoPlan && wave.demoPlan.length > 0 && (
+                        <AccordionItem value="demo">
+                          <AccordionTrigger className="text-white">
+                            Demo Plan
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.demoPlan.map((step, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <span className="text-blue-400 mt-1">
+                                    {idx + 1}.
+                                  </span>
+                                  <span>{step}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* KPIs */}
+                      {wave.kpis && wave.kpis.length > 0 && (
+                        <AccordionItem value="kpis">
+                          <AccordionTrigger className="text-white">
+                            KPIs
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.kpis.map((kpi, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <TrendingUp className="h-4 w-4 text-green-400 mt-1 flex-shrink-0" />
+                                  <span>{kpi}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+
+                      {/* Notes */}
+                      {wave.notes && wave.notes.length > 0 && (
+                        <AccordionItem value="notes">
+                          <AccordionTrigger className="text-white">
+                            Notes
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-2">
+                              {wave.notes.map((note, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300"
+                                >
+                                  <span className="text-slate-500 mt-1">ℹ</span>
+                                  <span>{note}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      )}
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {filteredWaves.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-slate-400">
+                No waves match the selected filter.
               </p>
-              <div className="flex justify-center gap-4 pt-4">
-                <a href="#" className="text-primary hover:underline">Twitter</a>
-                <span className="text-muted-foreground">•</span>
-                <a href="#" className="text-primary hover:underline">Discord</a>
-                <span className="text-muted-foreground">•</span>
-                <a href="#" className="text-primary hover:underline">GitHub</a>
-              </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          )}
         </div>
       </main>
-
       <Footer />
     </div>
   );
