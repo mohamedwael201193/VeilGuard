@@ -403,14 +403,40 @@ export default function InvoiceView() {
 
       setReceiptCommitment(commitment);
 
-      // Store on-chain
-      const hash = await storeCommitment({
-        chainId,
-        receiptStoreAddress: chainConfig.receiptStore as `0x${string}`,
-        invoiceId: invoiceIdBytes,
-        commitment,
-        walletClient,
-      });
+      // Store on-chain with retry for rate limiting
+      let hash;
+      let retries = 0;
+      const maxRetries = 2;
+
+      while (retries <= maxRetries) {
+        try {
+          hash = await storeCommitment({
+            chainId,
+            receiptStoreAddress: chainConfig.receiptStore as `0x${string}`,
+            invoiceId: invoiceIdBytes,
+            commitment,
+            walletClient,
+          });
+          break; // Success, exit loop
+        } catch (err: any) {
+          const isRateLimited =
+            err.message?.includes("rate limit") ||
+            err.message?.includes("too many requests");
+
+          if (isRateLimited && retries < maxRetries) {
+            retries++;
+            toast.loading(
+              `Rate limited. Retrying in 3 seconds... (${retries}/${maxRetries})`,
+              {
+                id: "receipt",
+              }
+            );
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+          } else {
+            throw err; // Re-throw if not rate limit or max retries reached
+          }
+        }
+      }
 
       // Generate shareable link
       const link = generateReceiptLink(
@@ -423,9 +449,25 @@ export default function InvoiceView() {
       setShowReceiptModal(true);
     } catch (error: any) {
       console.error("Receipt error:", error);
-      toast.error(error.message || "Failed to create receipt", {
-        id: "receipt",
-      });
+
+      // Better error message for rate limiting
+      const isRateLimited =
+        error.message?.includes("rate limit") ||
+        error.message?.includes("too many requests");
+
+      if (isRateLimited) {
+        toast.error(
+          "Rate limited by RPC. Please wait 30 seconds and try again.",
+          {
+            id: "receipt",
+            duration: 5000,
+          }
+        );
+      } else {
+        toast.error(error.message || "Failed to create receipt", {
+          id: "receipt",
+        });
+      }
     } finally {
       setIsCreatingReceipt(false);
     }
