@@ -1,13 +1,13 @@
-import { motion } from 'framer-motion';
-import { Shield, Lock, Eye, Database } from 'lucide-react';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import { motion } from "framer-motion";
+import { Database, Eye, Lock, Shield } from "lucide-react";
 
 export default function Legal() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <motion.div
@@ -38,14 +38,23 @@ export default function Legal() {
                 </div>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    VeilGuard is built with privacy as a core principle, not an afterthought. Our architecture 
-                    ensures that sensitive payment information remains confidential.
+                    VeilGuard is built with privacy as a core principle, not an
+                    afterthought. Our architecture ensures that sensitive
+                    payment information remains confidential.
                   </p>
                   <ul className="space-y-2 list-disc list-inside">
-                    <li>Each invoice uses a unique stealth address (ERC-5564)</li>
+                    <li>
+                      Each invoice uses a unique stealth address (ERC-5564)
+                    </li>
                     <li>No payment history linkage between invoices</li>
-                    <li>Zero personal identifiable information (PII) stored on-chain</li>
-                    <li>Optional zk-receipts for verifiable privacy (Wave 4)</li>
+                    <li>
+                      Zero personal identifiable information (PII) stored
+                      on-chain
+                    </li>
+                    <li>
+                      Cryptographic receipts for verifiable proof without
+                      exposing transaction details
+                    </li>
                   </ul>
                 </div>
               </motion.div>
@@ -61,15 +70,20 @@ export default function Legal() {
                   <div className="p-3 bg-violet/10 rounded-lg">
                     <Database className="h-6 w-6 text-violet" />
                   </div>
-                  <h2 className="text-2xl font-bold">Minimal Data Collection</h2>
+                  <h2 className="text-2xl font-bold">
+                    Minimal Data Collection
+                  </h2>
                 </div>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    VeilGuard collects only the minimum data necessary to provide the service:
+                    VeilGuard collects only the minimum data necessary to
+                    provide the service:
                   </p>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <h3 className="font-semibold text-foreground">On-Chain Data:</h3>
+                      <h3 className="font-semibold text-foreground">
+                        On-Chain Data:
+                      </h3>
                       <ul className="space-y-1 text-sm">
                         <li>• Invoice amount and token</li>
                         <li>• Stealth address (one-time use)</li>
@@ -78,7 +92,9 @@ export default function Legal() {
                       </ul>
                     </div>
                     <div className="space-y-2">
-                      <h3 className="font-semibold text-foreground">Off-Chain Data:</h3>
+                      <h3 className="font-semibold text-foreground">
+                        Off-Chain Data:
+                      </h3>
                       <ul className="space-y-1 text-sm">
                         <li>• Local browser storage for UI state</li>
                         <li>• No server-side user database</li>
@@ -104,25 +120,39 @@ export default function Legal() {
                   <h2 className="text-2xl font-bold">Your Privacy Rights</h2>
                 </div>
                 <div className="space-y-4 text-muted-foreground">
-                  <p>
-                    As a VeilGuard user, you have the following rights:
-                  </p>
+                  <p>As a VeilGuard user, you have the following rights:</p>
                   <ul className="space-y-2">
                     <li className="flex gap-2">
                       <span className="text-primary">✓</span>
-                      <span><strong className="text-foreground">Control:</strong> You control your wallet and private keys</span>
+                      <span>
+                        <strong className="text-foreground">Control:</strong>{" "}
+                        You control your wallet and private keys
+                      </span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-primary">✓</span>
-                      <span><strong className="text-foreground">Transparency:</strong> All smart contract code is verified and public</span>
+                      <span>
+                        <strong className="text-foreground">
+                          Transparency:
+                        </strong>{" "}
+                        All smart contract code is verified and public
+                      </span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-primary">✓</span>
-                      <span><strong className="text-foreground">Portability:</strong> Export your invoice data at any time</span>
+                      <span>
+                        <strong className="text-foreground">
+                          Portability:
+                        </strong>{" "}
+                        Export your invoice data at any time
+                      </span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-primary">✓</span>
-                      <span><strong className="text-foreground">Deletion:</strong> Clear local storage to remove all off-chain data</span>
+                      <span>
+                        <strong className="text-foreground">Deletion:</strong>{" "}
+                        Clear local storage to remove all off-chain data
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -147,7 +177,10 @@ export default function Legal() {
                   </p>
                   <ul className="space-y-2 list-disc list-inside">
                     <li>Audited smart contracts with verified source code</li>
-                    <li>Client-side stealth address generation (no server exposure)</li>
+                    <li>
+                      Client-side stealth address generation (no server
+                      exposure)
+                    </li>
                     <li>HTTPS encryption for all web traffic</li>
                     <li>No server-side storage of sensitive payment data</li>
                     <li>Regular security updates and monitoring</li>
@@ -164,10 +197,11 @@ export default function Legal() {
               >
                 <h3 className="font-semibold mb-2">Important Disclaimer</h3>
                 <p className="text-sm text-muted-foreground">
-                  VeilGuard is experimental software currently in Wave 2 development. While we implement 
-                  best practices for privacy and security, users should conduct their own due diligence 
-                  and only use VeilGuard for amounts they can afford to risk. Never share your private 
-                  keys or seed phrases with anyone.
+                  VeilGuard is experimental software currently in Wave 2
+                  development. While we implement best practices for privacy and
+                  security, users should conduct their own due diligence and
+                  only use VeilGuard for amounts they can afford to risk. Never
+                  share your private keys or seed phrases with anyone.
                 </p>
               </motion.div>
 
@@ -179,14 +213,21 @@ export default function Legal() {
                 className="text-center space-y-4"
               >
                 <p className="text-muted-foreground">
-                  Questions about our privacy practices? Reach out via our community channels.
+                  Questions about our privacy practices? Reach out via our
+                  community channels.
                 </p>
                 <div className="flex justify-center gap-4">
-                  <a href="#" className="text-primary hover:underline">Discord</a>
+                  <a href="#" className="text-primary hover:underline">
+                    Discord
+                  </a>
                   <span className="text-muted-foreground">•</span>
-                  <a href="#" className="text-primary hover:underline">Twitter</a>
+                  <a href="#" className="text-primary hover:underline">
+                    Twitter
+                  </a>
                   <span className="text-muted-foreground">•</span>
-                  <a href="#" className="text-primary hover:underline">GitHub</a>
+                  <a href="#" className="text-primary hover:underline">
+                    GitHub
+                  </a>
                 </div>
               </motion.div>
             </div>
