@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Plus, TrendingUp, CheckCircle, Clock, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { StatsCard } from '@/components/StatsCard';
-import { InvoiceCard } from '@/components/InvoiceCard';
-import { useInvoiceStore } from '@/store/invoiceStore';
-import { useAccount } from 'wagmi';
+import { InvoiceCard } from "@/components/InvoiceCard";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import { StatsCard } from "@/components/StatsCard";
+import { Button } from "@/components/ui/button";
+import { useInvoiceStore } from "@/store/invoiceStore";
+import { motion } from "framer-motion";
+import { CheckCircle, Clock, FileText, Plus, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAccount } from "wagmi";
 
 export default function Dashboard() {
   const { isConnected } = useAccount();
@@ -39,7 +38,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 space-y-8">
           {/* Header */}
@@ -87,7 +86,7 @@ export default function Dashboard() {
               title="Success Rate"
               value={`${stats.successRate}%`}
               icon={CheckCircle}
-              trend={stats.successRate > 80 ? 'up' : 'neutral'}
+              trend={stats.successRate > 80 ? "up" : "neutral"}
               delay={0.2}
             />
             <StatsCard
@@ -108,20 +107,33 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Link to="/invoice/new">
-                <Button variant="outline" className="w-full justify-start magnetic">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start magnetic"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Invoice
                 </Button>
               </Link>
               <Link to="/receipts">
-                <Button variant="outline" className="w-full justify-start magnetic">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start magnetic"
+                >
                   <FileText className="h-4 w-4 mr-2" />
-                  View Receipts (Wave 4)
+                  View Receipts
                 </Button>
               </Link>
-              <Button variant="outline" className="w-full justify-start magnetic" disabled>
+              <Button
+                variant="outline"
+                className="w-full justify-start magnetic"
+                disabled
+              >
                 <TrendingUp className="h-4 w-4 mr-2" />
-                Export CSV (Wave 4)
+                Export CSV
+                <span className="ml-auto text-xs text-muted-foreground">
+                  Coming Soon
+                </span>
               </Button>
             </div>
           </motion.div>
@@ -134,11 +146,13 @@ export default function Dashboard() {
             className="space-y-4"
           >
             <h2 className="text-2xl font-semibold">Recent Invoices</h2>
-            
+
             {invoices.length === 0 ? (
               <div className="glass p-12 rounded-lg text-center space-y-4">
                 <FileText className="h-12 w-12 text-muted-foreground mx-auto" />
-                <p className="text-muted-foreground">No invoices yet. Create your first one!</p>
+                <p className="text-muted-foreground">
+                  No invoices yet. Create your first one!
+                </p>
                 <Link to="/invoice/new">
                   <Button className="magnetic bg-primary hover:bg-primary/90">
                     Create Invoice
@@ -148,7 +162,11 @@ export default function Dashboard() {
             ) : (
               <div className="grid gap-4">
                 {invoices.map((invoice, i) => (
-                  <InvoiceCard key={invoice.id} invoice={invoice} delay={i * 0.05} />
+                  <InvoiceCard
+                    key={invoice.id}
+                    invoice={invoice}
+                    delay={i * 0.05}
+                  />
                 ))}
               </div>
             )}
