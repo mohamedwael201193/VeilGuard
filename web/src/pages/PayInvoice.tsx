@@ -222,7 +222,9 @@ export default function PayInvoice() {
               <div className="flex justify-between mb-2">
                 <span className="text-gray-400">Transaction</span>
                 <a
-                  href={`https://amoy.polygonscan.com/tx/${txHash}`}
+                  href={`https://${
+                    invoiceData.chainId === 80002 ? "amoy." : ""
+                  }polygonscan.com/tx/${txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-purple-400 hover:text-purple-300 text-sm"

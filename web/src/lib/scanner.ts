@@ -43,8 +43,12 @@ export async function getAnnouncements(
   const chain = CHAINS[chainId];
   if (!chain) throw new Error(`Unsupported chain: ${chainId}`);
 
-  // Use public RPC to avoid Alchemy free tier block range limits
-  const rpcUrl = "https://rpc-amoy.polygon.technology/";
+  // Use Alchemy RPC for better block range support
+  const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
+  const rpcUrl =
+    chainId === 80002
+      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
+      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
     chain: {
@@ -63,28 +67,80 @@ export async function getAnnouncements(
     transport: http(),
   });
 
-  // If scanning from block 0, limit to recent blocks to avoid timeout
-  // Scan last 10,000 blocks (~7 hours on Polygon) to balance speed and coverage
+  // Get latest block for range calculation
+  const latestBlockNum = await client.getBlockNumber();
+  const toBlockNum = toBlock === "latest" ? latestBlockNum : toBlock;
+
+  // If scanning from block 0, limit to recent blocks
   if (fromBlock === 0n) {
-    const latestBlock = await client.getBlockNumber();
+    // Scan last 10,000 blocks (~5 hours on Polygon) for recent payments
+    // With 10-block chunks, this is 1000 API calls (acceptable for Alchemy free tier)
     const blocksToScan = 10000n;
-    fromBlock = latestBlock > blocksToScan ? latestBlock - blocksToScan : 0n;
+    fromBlock =
+      latestBlockNum > blocksToScan ? latestBlockNum - blocksToScan : 0n;
     console.log(`Scanning recent blocks: ${fromBlock} to latest`);
   }
+
+  // Alchemy free tier: STRICT 10 block limit per request
+  const chunkSize = 10n;
+  const allLogs: any[] = [];
 
   // Announcement event signature (matches StealthHelper.sol)
   const announcementEvent = parseAbiItem(
     "event Announcement(uint256 indexed schemeId, address indexed stealthAddress, address indexed initiator, bytes ephemeralPubKey, bytes metadata)"
   );
 
-  const logs = await client.getLogs({
-    address: stealthHelperAddress,
-    event: announcementEvent,
-    fromBlock,
-    toBlock,
-  });
+  // Create array of chunk ranges
+  const chunks: Array<{ start: bigint; end: bigint }> = [];
+  for (let start = fromBlock; start <= toBlockNum; start += chunkSize) {
+    const end =
+      start + chunkSize - 1n > toBlockNum ? toBlockNum : start + chunkSize - 1n;
+    chunks.push({ start, end });
+  }
 
-  return logs.map((log) => ({
+  console.log(`Scanning ${chunks.length} chunks in batches...`);
+
+  // Scan chunks in parallel (batches of 3 to avoid rate limits)
+  // Add delay between batches to stay under Alchemy free tier rate limits
+  const batchSize = 3;
+  for (let i = 0; i < chunks.length; i += batchSize) {
+    const batch = chunks.slice(i, i + batchSize);
+    const promises = batch.map(async ({ start, end }) => {
+      try {
+        const logs = await client.getLogs({
+          address: stealthHelperAddress,
+          event: announcementEvent,
+          fromBlock: start,
+          toBlock: end,
+        });
+        return logs;
+      } catch (error) {
+        console.warn(`Failed to scan blocks ${start}-${end}:`, error);
+        return [];
+      }
+    });
+
+    const results = await Promise.all(promises);
+    results.forEach((logs) => allLogs.push(...logs));
+
+    // Progress indicator
+    if (chunks.length > 100) {
+      console.log(
+        `Progress: ${Math.min(i + batchSize, chunks.length)}/${
+          chunks.length
+        } chunks`
+      );
+    }
+
+    // Longer delay between batches to avoid rate limits (200ms)
+    if (i + batchSize < chunks.length) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+  }
+
+  console.log(`Found ${allLogs.length} announcements`);
+
+  return allLogs.map((log) => ({
     blockNumber: log.blockNumber,
     transactionHash: log.transactionHash,
     schemeId: log.args.schemeId!,
@@ -145,8 +201,12 @@ export async function getIncomingTransfers(
   const chain = CHAINS[chainId];
   if (!chain) throw new Error(`Unsupported chain: ${chainId}`);
 
-  // Use public RPC to avoid Alchemy free tier block range limits
-  const rpcUrl = "https://rpc-amoy.polygon.technology/";
+  // Use Alchemy RPC for better block range support
+  const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
+  const rpcUrl =
+    chainId === 80002
+      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
+      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
     chain: {
@@ -165,22 +225,78 @@ export async function getIncomingTransfers(
     transport: http(),
   });
 
+  // Get latest block for range calculation
+  const latestBlockNum = await client.getBlockNumber();
+  const toBlockNum = toBlock === "latest" ? latestBlockNum : toBlock;
+
+  // If scanning from block 0, limit to recent blocks
+  if (fromBlock === 0n) {
+    // Scan last 10,000 blocks (~5 hours on Polygon) for recent transfers
+    const blocksToScan = 10000n;
+    fromBlock =
+      latestBlockNum > blocksToScan ? latestBlockNum - blocksToScan : 0n;
+  }
+
+  // Alchemy free tier: STRICT 10 block limit per request
+  const chunkSize = 10n;
+  const allLogs: any[] = [];
+
   // Transfer event signature
   const transferEvent = parseAbiItem(
     "event Transfer(address indexed from, address indexed to, uint256 value)"
   );
 
-  const logs = await client.getLogs({
-    address: tokenAddress,
-    event: transferEvent,
-    args: {
-      to: toAddress,
-    },
-    fromBlock,
-    toBlock,
-  });
+  // Create array of chunk ranges (10 blocks each)
+  const chunks: Array<{ start: bigint; end: bigint }> = [];
+  for (let start = fromBlock; start <= toBlockNum; start += chunkSize) {
+    const end =
+      start + chunkSize - 1n > toBlockNum ? toBlockNum : start + chunkSize - 1n;
+    chunks.push({ start, end });
+  }
 
-  return logs.map((log) => ({
+  // Scan chunks in parallel (batches of 3 to avoid rate limits)
+  const batchSize = 3;
+  for (let i = 0; i < chunks.length; i += batchSize) {
+    const batch = chunks.slice(i, i + batchSize);
+    const promises = batch.map(async ({ start, end }) => {
+      try {
+        const logs = await client.getLogs({
+          address: tokenAddress,
+          event: transferEvent,
+          args: {
+            to: toAddress,
+          },
+          fromBlock: start,
+          toBlock: end,
+        });
+        return logs;
+      } catch (error) {
+        console.warn(`Failed to scan transfers ${start}-${end}:`, error);
+        return [];
+      }
+    });
+
+    const results = await Promise.all(promises);
+    results.forEach((logs) => allLogs.push(...logs));
+
+    // Progress indicator
+    if (chunks.length > 100) {
+      console.log(
+        `Transfer progress: ${Math.min(i + batchSize, chunks.length)}/${
+          chunks.length
+        } chunks`
+      );
+    }
+
+    // Longer delay between batches to avoid rate limits (200ms)
+    if (i + batchSize < chunks.length) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+  }
+
+  console.log(`Found ${allLogs.length} transfers`);
+
+  return allLogs.map((log) => ({
     blockNumber: log.blockNumber,
     transactionHash: log.transactionHash,
     from: log.args.from!,

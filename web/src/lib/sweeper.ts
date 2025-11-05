@@ -16,6 +16,16 @@ import { CHAINS, ERC20_ABI, MERCHANT_SAFE } from "./contracts";
 import { deriveStealthKeys } from "./stealthSpec";
 
 /**
+ * Get RPC URL for the given chain
+ */
+function getRpcUrl(chainId: number): string {
+  const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
+  return chainId === 80002
+    ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
+    : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+}
+
+/**
  * Derive the stealth private key from merchant meta keys and ephemeral public key
  * This is the key that controls funds sent to the stealth address
  *
@@ -74,18 +84,10 @@ export async function sweepUsdc({
     nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
     rpcUrls: {
       default: {
-        http: [
-          `https://polygon-amoy.g.alchemy.com/v2/${
-            import.meta.env.VITE_ALCHEMY_API_KEY || ""
-          }`,
-        ],
+        http: [getRpcUrl(chainId)],
       },
       public: {
-        http: [
-          `https://polygon-amoy.g.alchemy.com/v2/${
-            import.meta.env.VITE_ALCHEMY_API_KEY || ""
-          }`,
-        ],
+        http: [getRpcUrl(chainId)],
       },
     },
   };
@@ -184,18 +186,10 @@ export async function refundUsdc({
     nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
     rpcUrls: {
       default: {
-        http: [
-          `https://polygon-amoy.g.alchemy.com/v2/${
-            import.meta.env.VITE_ALCHEMY_API_KEY || ""
-          }`,
-        ],
+        http: [getRpcUrl(chainId)],
       },
       public: {
-        http: [
-          `https://polygon-amoy.g.alchemy.com/v2/${
-            import.meta.env.VITE_ALCHEMY_API_KEY || ""
-          }`,
-        ],
+        http: [getRpcUrl(chainId)],
       },
     },
   };
@@ -276,18 +270,10 @@ export async function getStealthBalance(
     nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
     rpcUrls: {
       default: {
-        http: [
-          `https://polygon-amoy.g.alchemy.com/v2/${
-            import.meta.env.VITE_ALCHEMY_API_KEY || ""
-          }`,
-        ],
+        http: [getRpcUrl(chainId)],
       },
       public: {
-        http: [
-          `https://polygon-amoy.g.alchemy.com/v2/${
-            import.meta.env.VITE_ALCHEMY_API_KEY || ""
-          }`,
-        ],
+        http: [getRpcUrl(chainId)],
       },
     },
   };
