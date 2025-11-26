@@ -1,10 +1,15 @@
 /**
- * Event Scanner for View-Key Inbox
+ * Event Scanner for View-Key Inbox - Wave 3
  * Scans Announcement and Transfer events to detect incoming stealth payments
+ *
+ * Wave 3 Updates:
+ * - Added encrypted memo decryption support
+ * - Enhanced payment matching with token info
  */
 
 import { createPublicClient, http, parseAbiItem } from "viem";
 import { CHAINS } from "./contracts";
+import { decryptMemo, isEncryptedMemo } from "./encryptedMemo";
 import { deriveStealthKeys } from "./stealthSpec";
 
 export type AnnouncementLog = {
@@ -16,6 +21,7 @@ export type AnnouncementLog = {
   ephemeralPubKey: `0x${string}`;
   metadata: `0x${string}`;
   isMine?: boolean;
+  decryptedMemo?: string; // Wave 3: decrypted memo
 };
 
 export type TransferLog = {
@@ -24,6 +30,7 @@ export type TransferLog = {
   from: `0x${string}`;
   to: `0x${string}`;
   value: bigint;
+  tokenAddress?: `0x${string}`; // Wave 3: token address
 };
 
 /**
@@ -153,26 +160,66 @@ export async function getAnnouncements(
 
 /**
  * Filter announcements that belong to the merchant (using view key)
+ * Wave 3: Also decrypts encrypted memos
  *
  * @param announcements - List of announcement logs
  * @param viewPriv - Merchant's view private key
  * @param spendPriv - Merchant's spend private key (for address derivation)
- * @returns Filtered list with isMine flag set
+ * @returns Filtered list with isMine flag set and decrypted memos
  */
-export function filterMine(
+export async function filterMine(
+  announcements: AnnouncementLog[],
+  meta: { spendPriv: `0x${string}`; viewPriv: `0x${string}` }
+): Promise<AnnouncementLog[]> {
+  const results: AnnouncementLog[] = [];
+
+  for (const ann of announcements) {
+    try {
+      // Recompute stealth address using view key and ephemeral public key
+      const { stealthAddress } = deriveStealthKeys(meta, ann.ephemeralPubKey);
+
+      // Check if recomputed address matches announced address
+      const isMine =
+        stealthAddress.toLowerCase() === ann.stealthAddress.toLowerCase();
+
+      if (isMine) {
+        let decryptedMemo: string | undefined;
+
+        // Wave 3: Try to decrypt memo if it looks encrypted
+        if (ann.metadata && isEncryptedMemo(ann.metadata)) {
+          try {
+            decryptedMemo = await decryptMemo(
+              ann.metadata,
+              meta.viewPriv,
+              ann.ephemeralPubKey
+            );
+          } catch (e) {
+            console.warn("Failed to decrypt memo:", e);
+            decryptedMemo = "[encrypted]";
+          }
+        }
+
+        results.push({ ...ann, isMine: true, decryptedMemo });
+      }
+    } catch (error) {
+      console.error("Error filtering announcement:", error);
+    }
+  }
+
+  return results;
+}
+
+// Legacy sync version for backwards compatibility
+export function filterMineSync(
   announcements: AnnouncementLog[],
   meta: { spendPriv: `0x${string}`; viewPriv: `0x${string}` }
 ): AnnouncementLog[] {
   return announcements
     .map((ann) => {
       try {
-        // Recompute stealth address using view key and ephemeral public key
         const { stealthAddress } = deriveStealthKeys(meta, ann.ephemeralPubKey);
-
-        // Check if recomputed address matches announced address
         const isMine =
           stealthAddress.toLowerCase() === ann.stealthAddress.toLowerCase();
-
         return { ...ann, isMine };
       } catch (error) {
         console.error("Error filtering announcement:", error);

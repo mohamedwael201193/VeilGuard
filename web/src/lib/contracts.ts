@@ -8,7 +8,7 @@ export const MERCHANT_SAFE = (import.meta.env.VITE_MERCHANT_SAFE ||
   "") as string;
 export const isSpecMode = () => STEALTH_MODE === "spec";
 
-// Chain configurations
+// Chain configurations with multi-token support (Wave 3)
 export const CHAINS: Record<number, ChainConfig> = {
   137: {
     id: 137,
@@ -23,6 +23,26 @@ export const CHAINS: Record<number, ChainConfig> = {
         symbol: "USDC.e",
         address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
         decimals: 6,
+      },
+      {
+        symbol: "USDT",
+        address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+        decimals: 6,
+      },
+      {
+        symbol: "DAI",
+        address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+        decimals: 18,
+      },
+      {
+        symbol: "WETH",
+        address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        decimals: 18,
+      },
+      {
+        symbol: "WPOL",
+        address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        decimals: 18,
       },
     ],
     invoiceRegistry:
@@ -44,6 +64,16 @@ export const CHAINS: Record<number, ChainConfig> = {
         symbol: "tUSDC",
         address: "0x3156F6E761D7c9dA0a88A6165864995f2b58854f",
         decimals: 6,
+      },
+      {
+        symbol: "tUSDT",
+        address: "0x1616e4F05b7D55f28F5D56E42c9d5e0b4b01c7F4",
+        decimals: 6,
+      },
+      {
+        symbol: "tDAI",
+        address: "0x8cE6C83B7D06Db3E35a7cf15f4A6E3F8f7e8E9D7",
+        decimals: 18,
       },
     ],
     invoiceRegistry:
@@ -127,6 +157,16 @@ export const ERC20_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    name: "transfer",
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [{ name: "account", type: "address" }],
     name: "balanceOf",
     outputs: [{ name: "", type: "uint256" }],
@@ -140,6 +180,20 @@ export const ERC20_ABI = [
     ],
     name: "allowance",
     outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ name: "account", type: "address" }],
+    name: "decimals",
+    outputs: [{ name: "", type: "uint8" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "symbol",
+    outputs: [{ name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },

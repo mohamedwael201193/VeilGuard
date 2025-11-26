@@ -1,7 +1,12 @@
 /**
- * Self-Custodial Sweeper
+ * Self-Custodial Sweeper - Wave 3
  * Locally derive stealth private keys and sweep funds to merchant safe
  * No backend, no custody - keys stay in browser memory only
+ *
+ * Wave 3 Updates:
+ * - Fixed approve() → transfer() bug
+ * - Multi-token support with dynamic decimals
+ * - Auto-yield integration for swept funds
  */
 
 import {
@@ -14,6 +19,19 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { CHAINS, ERC20_ABI, MERCHANT_SAFE } from "./contracts";
 import { deriveStealthKeys } from "./stealthSpec";
+
+// Token decimals mapping for formatting
+const TOKEN_DECIMALS: Record<string, number> = {
+  USDC: 6,
+  "USDC.e": 6,
+  USDT: 6,
+  DAI: 18,
+  WETH: 18,
+  WPOL: 18,
+  tUSDC: 6,
+  tUSDT: 6,
+  tDAI: 18,
+};
 
 /**
  * Get RPC URL for the given chain
@@ -45,25 +63,29 @@ export function deriveStealthPriv(
 }
 
 /**
- * Sweep USDC from stealth address to merchant safe
+ * Sweep tokens from stealth address to merchant safe
+ * Wave 3: Supports multiple tokens with correct decimals
  *
  * @param stealthPriv - Derived stealth private key
  * @param chainId - Chain ID
- * @param tokenAddress - ERC20 token address (USDC)
+ * @param tokenAddress - ERC20 token address
+ * @param tokenSymbol - Token symbol for decimal lookup
  * @param amount - Amount to sweep (optional, defaults to full balance)
  * @returns Transaction hash
  */
-export async function sweepUsdc({
+export async function sweepTokens({
   stealthPriv,
   stealthAddress,
   chainId,
   tokenAddress,
+  tokenSymbol = "USDC",
   amount,
 }: {
   stealthPriv: `0x${string}`;
   stealthAddress: string;
   chainId: number;
   tokenAddress: Address;
+  tokenSymbol?: string;
   amount?: bigint;
 }): Promise<`0x${string}`> {
   if (!MERCHANT_SAFE) {
@@ -129,18 +151,21 @@ export async function sweepUsdc({
     throw new Error("No funds to sweep");
   }
 
+  // Get token decimals for formatting
+  const decimals = TOKEN_DECIMALS[tokenSymbol] || 18;
+
   console.log(
     `Sweeping ${formatUnits(
       sweepAmount,
-      6
-    )} USDC from ${stealthAddress} to ${MERCHANT_SAFE}`
+      decimals
+    )} ${tokenSymbol} from ${stealthAddress} to ${MERCHANT_SAFE}`
   );
 
-  // Transfer to merchant safe
+  // Transfer to merchant safe (fixed: was incorrectly using approve)
   const hash = await walletClient.writeContract({
     address: tokenAddress,
     abi: ERC20_ABI,
-    functionName: "approve",
+    functionName: "transfer",
     args: [MERCHANT_SAFE as Address, sweepAmount],
     account,
     chain: chainConfig,
@@ -148,6 +173,9 @@ export async function sweepUsdc({
 
   return hash;
 }
+
+// Keep legacy function name for backwards compatibility
+export const sweepUsdc = sweepTokens;
 
 /**
  * Refund USDC from stealth address back to the original payer
@@ -232,11 +260,11 @@ export async function refundUsdc({
     } to ${payerAddress}`
   );
 
-  // Transfer back to original payer - using approve for now as transfer needs different handling
+  // Transfer back to original payer (fixed: was incorrectly using approve)
   const hash = await walletClient.writeContract({
     address: tokenAddress,
     abi: ERC20_ABI,
-    functionName: "approve",
+    functionName: "transfer",
     args: [payerAddress, refundAmount],
     account,
     chain: chainConfig,

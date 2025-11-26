@@ -1,9 +1,11 @@
 import { ConnectButton } from "@/components/ConnectButton";
 import { NetworkSwitcher } from "@/components/NetworkSwitcher";
+import { TokenBadge } from "@/components/TokenSelector";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getChainConfig } from "@/lib/contracts";
-import { ArrowRight, CheckCircle2, Loader2, Shield } from "lucide-react";
+import { getOptimalGasFunding } from "@/lib/gasManager";
+import { ArrowRight, CheckCircle2, Clock, Loader2, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -14,10 +16,29 @@ interface InvoiceData {
   stealthAddress: Address;
   amount: string;
   token: Address;
+  tokenSymbol: string; // Wave 3: token symbol
+  tokenDecimals: number; // Wave 3: token decimals
   ephemeralPubKey: `0x${string}`;
   merchantName?: string;
   description?: string;
   chainId: number;
+  expiresAt?: number; // Wave 3: invoice expiry
+}
+
+// Helper to get token info from address
+function getTokenSymbol(
+  chainId: number,
+  tokenAddress: string
+): { symbol: string; decimals: number } {
+  const chainConfig = getChainConfig(chainId);
+  if (!chainConfig) return { symbol: "TOKEN", decimals: 18 };
+
+  const token = chainConfig.tokens.find(
+    (t) => t.address.toLowerCase() === tokenAddress.toLowerCase()
+  );
+  return token
+    ? { symbol: token.symbol, decimals: token.decimals }
+    : { symbol: "TOKEN", decimals: 18 };
 }
 
 export default function PayInvoice() {
@@ -33,6 +54,11 @@ export default function PayInvoice() {
   const [isPaying, setIsPaying] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [txHash, setTxHash] = useState<string>("");
+  const [gasEstimate, setGasEstimate] = useState<{
+    amount: string;
+    shouldFund: boolean;
+  } | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
 
   // Parse invoice data from URL
   useEffect(() => {
@@ -46,20 +72,33 @@ export default function PayInvoice() {
       const merchantName = searchParams.get("merchant") || undefined;
       const description = searchParams.get("description") || undefined;
       const invoiceChainId = searchParams.get("chainId");
+      const expiresAtStr = searchParams.get("expiresAt");
 
       if (!stealthAddress || !token || !ephemeralPubKey) {
         toast.error("Invalid invoice link");
         return;
       }
 
+      const parsedChainId = invoiceChainId ? parseInt(invoiceChainId) : 80002;
+      const { symbol, decimals } = getTokenSymbol(parsedChainId, token);
+      const expiresAt = expiresAtStr ? parseInt(expiresAtStr) : undefined;
+
+      // Check if expired
+      if (expiresAt && Date.now() > expiresAt) {
+        setIsExpired(true);
+      }
+
       setInvoiceData({
         stealthAddress,
         amount,
         token,
+        tokenSymbol: symbol,
+        tokenDecimals: decimals,
         ephemeralPubKey,
         merchantName,
         description,
-        chainId: invoiceChainId ? parseInt(invoiceChainId) : 80002, // Default to Amoy
+        chainId: parsedChainId,
+        expiresAt,
       });
     } catch (error) {
       console.error("Error parsing invoice:", error);
@@ -118,19 +157,32 @@ export default function PayInvoice() {
 
       toast.loading("Sending payment + gas...", { id: "payment" });
 
-      // Step 2: Send gas (POL) to stealth address for sweeping later
-      const gasAmount = parseUnits("0.1", 18); // 0.1 POL for gas
+      // Step 2: Smart gas funding (Wave 3) - only send what's needed
+      const gasFunding = await getOptimalGasFunding(
+        invoiceData.chainId,
+        invoiceData.stealthAddress
+      );
 
-      // Use a simple transfer by calling a nonexistent function (fallback)
-      const gasHash = await walletClient.sendTransaction({
-        to: invoiceData.stealthAddress,
-        value: gasAmount,
-      } as any); // Type workaround for viem v2
+      if (gasFunding.shouldFund && gasFunding.amount > 0n) {
+        toast.loading(`Sending ${gasFunding.amountEther} POL for gas...`, {
+          id: "payment",
+        });
 
-      await publicClient.waitForTransactionReceipt({ hash: gasHash });
+        const gasHash = await walletClient.sendTransaction({
+          to: invoiceData.stealthAddress,
+          value: gasFunding.amount,
+        } as any);
 
-      // Step 3: Send the actual token payment
-      const amountInSmallestUnit = parseUnits(invoiceData.amount, 6); // Assuming USDC with 6 decimals
+        await publicClient.waitForTransactionReceipt({ hash: gasHash });
+      } else {
+        console.log("Skipping gas funding:", gasFunding.reason);
+      }
+
+      // Step 3: Send the actual token payment with correct decimals
+      const amountInSmallestUnit = parseUnits(
+        invoiceData.amount,
+        invoiceData.tokenDecimals
+      );
 
       const paymentHash = await walletClient.writeContract({
         address: invoiceData.token,
@@ -215,8 +267,9 @@ export default function PayInvoice() {
             <div className="bg-gray-800/50 rounded-lg p-4 mb-6 text-left">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-400">Amount Paid</span>
-                <span className="text-white font-semibold">
-                  {invoiceData.amount} USDC
+                <span className="text-white font-semibold flex items-center gap-2">
+                  {invoiceData.amount}{" "}
+                  <TokenBadge symbol={invoiceData.tokenSymbol} />
                 </span>
               </div>
               <div className="flex justify-between mb-2">
@@ -291,9 +344,19 @@ export default function PayInvoice() {
 
           <div className="border-t border-gray-700 pt-4">
             <div className="text-sm text-gray-400 mb-1">Amount Due</div>
-            <div className="text-4xl font-bold text-white">
-              {invoiceData.amount} <span className="text-2xl">USDC</span>
+            <div className="text-4xl font-bold text-white flex items-center gap-3">
+              {invoiceData.amount}{" "}
+              <TokenBadge
+                symbol={invoiceData.tokenSymbol}
+                className="text-xl"
+              />
             </div>
+            {invoiceData.expiresAt && !isExpired && (
+              <div className="flex items-center gap-2 mt-2 text-yellow-400 text-sm">
+                <Clock className="w-4 h-4" />
+                Expires: {new Date(invoiceData.expiresAt).toLocaleString()}
+              </div>
+            )}
           </div>
         </div>
 
@@ -325,6 +388,17 @@ export default function PayInvoice() {
             </p>
             <NetworkSwitcher />
           </div>
+        ) : isExpired ? (
+          <div className="text-center">
+            <p className="text-red-400 mb-4">⚠️ This invoice has expired</p>
+            <Button
+              onClick={() => navigate("/")}
+              variant="outline"
+              className="w-full"
+            >
+              Return Home
+            </Button>
+          </div>
         ) : (
           <Button
             onClick={handlePay}
@@ -338,7 +412,7 @@ export default function PayInvoice() {
               </>
             ) : (
               <>
-                Pay {invoiceData.amount} USDC
+                Pay {invoiceData.amount} {invoiceData.tokenSymbol}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </>
             )}

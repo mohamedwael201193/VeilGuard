@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -37,9 +42,28 @@
         "internalType": "string",
         "name": "memo",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "expiresAt",
+        "type": "uint256"
       }
     ],
     "name": "InvoiceCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "invoiceId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InvoiceExpired",
     "type": "event"
   },
   {
@@ -67,6 +91,12 @@
         "indexed": false,
         "internalType": "bytes32",
         "name": "txHashHint",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "receiptHash",
         "type": "bytes32"
       }
     ],
@@ -141,6 +171,45 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "stealthAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "memo",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expiresAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "createInvoiceWithExpiry",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "invoiceId",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "invoiceId",
         "type": "bytes32"
@@ -174,6 +243,11 @@
             "internalType": "bool",
             "name": "paid",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "expiresAt",
+            "type": "uint256"
           }
         ],
         "internalType": "struct InvoiceRegistry.Invoice",
@@ -218,6 +292,30 @@
         "internalType": "bool",
         "name": "paid",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expiresAt",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "invoiceId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "isExpired",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "expired",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -242,6 +340,45 @@
       }
     ],
     "name": "markPaid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "receiptStore",
+    "outputs": [
+      {
+        "internalType": "contract IReceiptStore",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_receiptStore",
+        "type": "address"
+      }
+    ],
+    "name": "setReceiptStore",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
