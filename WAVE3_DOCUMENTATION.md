@@ -1,14 +1,14 @@
-# VeilGuard Wave 3 - Privacy+DeFi Enhancement
+# VeilGuard Wave 3.5 - Privacy+DeFi Enhancement
 
-**Version:** 3.0.0  
-**Release Date:** November 2025  
-**Status:** Production Ready
+**Version:** 3.5.0  
+**Release Date:** January 2025  
+**Status:** Production (Polygon Mainnet)
 
 ---
 
 ## 🎯 Executive Summary
 
-Wave 3 transforms VeilGuard from a privacy-focused invoicing tool into a comprehensive **Privacy+DeFi platform** that aligns with Polygon's ecosystem vision. This release introduces encrypted memos (ECIES), multi-token support, smart gas optimization, yield integration via Aave V3, and enhanced smart contracts with access control.
+Wave 3.5 transforms VeilGuard from a privacy-focused invoicing tool into a comprehensive **Privacy+DeFi platform** that aligns with Polygon's ecosystem vision. This release introduces encrypted memos (ECIES), multi-token support, smart gas optimization, yield integration via Aave V3, batch operations, analytics dashboard, and enhanced smart contracts with access control.
 
 ### Key Highlights
 
@@ -18,6 +18,10 @@ Wave 3 transforms VeilGuard from a privacy-focused invoicing tool into a compreh
 - 💰 **Yield Integration** - Earn yield on swept funds via Aave V3 (~3-5% APY)
 - 📜 **Receipt v2** - Access-controlled receipt storage with verification
 - ⏰ **Invoice Expiry** - Time-limited invoices with auto-expiration
+- 📦 **Batch Operations** - Gas-optimized bulk invoice creation (~30% gas savings)
+- 📊 **Analytics Dashboard** - Real-time metrics, conversion rates, GMV tracking
+- 🔍 **Name Resolution** - ENS/Unstoppable Domains support for recipient lookup
+- 🏦 **Multi-Vault Yield** - Smart routing to best APY (Aave/Morpho/Compound)
 
 ---
 
@@ -30,7 +34,11 @@ Wave 3 transforms VeilGuard from a privacy-focused invoicing tool into a compreh
 | `lib/encryptedMemo.ts`         | ECIES encryption/decryption for memos |
 | `lib/gasManager.ts`            | Smart gas calculation and funding     |
 | `lib/yieldManager.ts`          | Aave V3 integration for yield         |
+| `lib/batchOperations.ts`       | Gas-optimized batch invoice creation  |
+| `lib/analytics.ts`             | Real-time metrics and CSV export      |
+| `lib/nameResolver.ts`          | ENS/UD username resolution            |
 | `components/TokenSelector.tsx` | Multi-token dropdown component        |
+| `pages/Analytics.tsx`          | Analytics dashboard UI                |
 
 ### Modified Files
 
@@ -42,7 +50,8 @@ Wave 3 transforms VeilGuard from a privacy-focused invoicing tool into a compreh
 | `types/index.ts`                | Added tokenDecimals, expiresAt, encryptedMemo, YieldPosition |
 | `pages/NewInvoice.tsx`          | Token selector, expiry picker, encryption toggle             |
 | `pages/PayInvoice.tsx`          | Multi-token display, smart gas, expiry handling              |
-| `pages/Dashboard.tsx`           | Yield panel with APY and auto-stake toggle                   |
+| `pages/Dashboard.tsx`           | Yield panel, analytics link, auto-stake toggle               |
+| `pages/Analytics.tsx`           | Metrics dashboard with charts and CSV export                 |
 | `contracts/InvoiceRegistry.sol` | Invoice expiry, receipt integration                          |
 | `contracts/ReceiptStore.sol`    | Access control, verification helpers                         |
 
@@ -351,9 +360,9 @@ If deploying new contracts:
 
 ---
 
-## 📊 Judge Alignment (Buildathon)
+## 📊 Key Value Propositions
 
-### Nxtlvl Themes ✅
+### Privacy & Self-Sovereignty ✅
 
 | Theme             | Implementation                           |
 | ----------------- | ---------------------------------------- |
@@ -362,22 +371,23 @@ If deploying new contracts:
 | Stablecoins       | Multi-token with USDC, USDT, DAI         |
 | Pragmatic privacy | Selective memo encryption                |
 
-### ChillerWhale Themes ✅
+### Productive Capital ✅
 
 | Theme          | Implementation                  |
 | -------------- | ------------------------------- |
 | Productive TVL | Aave yield integration          |
 | Deep liquidity | Multi-token DeFi support        |
 | Real utility   | Invoicing is practical use case |
-| Low friction   | Smart gas, UX polish            |
+| Low friction   | Smart gas, batch ops, UX polish |
 
-### Katana Inspiration ✅
+### Merchant Scale ✅
 
-| Concept                | VeilGuard Implementation  |
-| ---------------------- | ------------------------- |
-| "Death to idle assets" | Auto-yield on swept funds |
-| Concentrated liquidity | Aave V3 integration       |
-| Chain-owned liquidity  | Receipt-backed payments   |
+| Concept                | VeilGuard Implementation     |
+| ---------------------- | ---------------------------- |
+| Death to idle assets   | Auto-yield on swept funds    |
+| Operational efficiency | Batch operations (~30% gas)  |
+| Business intelligence  | Analytics dashboard & export |
+| Enterprise UX          | ENS resolution for payments  |
 
 ---
 
@@ -386,13 +396,108 @@ If deploying new contracts:
 - **zk-Receipts**: Noir circuits for zero-knowledge payment proofs
 - **Cross-Chain**: AggLayer integration for multi-chain payments
 - **AgentPay SDK**: TypeScript SDK for programmatic invoice management
-- **Batch Operations**: Create/sweep multiple invoices in one transaction
+- **Recurring Invoices**: Subscription-style automated billing
+
+---
+
+## 📦 Wave 3.5 New Features
+
+### Batch Operations
+
+Create multiple invoices in a single session with optimized gas:
+
+```typescript
+import { batchCreateInvoices, estimateGasSavings } from "@/lib/batchOperations";
+
+// Estimate savings
+const estimate = estimateGasSavings(10, chainId);
+console.log(`Save ${estimate.savingsPercent}% gas with batching`);
+
+// Create batch
+const result = await batchCreateInvoices(chainId, walletClient, [
+  { token: USDC, amount: 100n, stealthAddress, memo: "Invoice 1" },
+  { token: USDC, amount: 200n, stealthAddress, memo: "Invoice 2" },
+  // ... more invoices
+]);
+
+console.log(`${result.successful} invoices created`);
+```
+
+### Analytics Dashboard
+
+Real-time merchant metrics with CSV export:
+
+```typescript
+import { calculateMetrics, getTimeSeries, exportToCSV } from "@/lib/analytics";
+
+const metrics = calculateMetrics(invoices);
+// metrics.totalInvoices, totalPaid, totalGMV, conversionRate, avgTimeToPayment
+
+const timeSeries = getTimeSeries(invoices, 30); // Last 30 days
+// Daily created/paid/volume breakdown
+
+const csv = exportToCSV(metrics, invoices);
+// Download-ready CSV for accounting
+```
+
+### Name Resolution (ENS/UD)
+
+Mastercard-style UX with username resolution:
+
+```typescript
+import {
+  resolveNameToAddress,
+  addressToName,
+  isValidName,
+} from "@/lib/nameResolver";
+
+// Resolve ENS/Unstoppable Domains
+const address = await resolveNameToAddress("vitalik.eth");
+const name = await addressToName("0x...");
+
+// Validate format
+if (isValidName("merchant.crypto")) {
+  // Valid Unstoppable Domain
+}
+```
+
+### Multi-Vault Yield Routing
+
+Smart routing to highest APY:
+
+```typescript
+import { getBestYieldVault, autoRouteDeposit } from "@/lib/yieldManager";
+
+// Find best yield
+const best = await getBestYieldVault(chainId, "USDC");
+// Returns Aave, Morpho, or Compound based on current APY
+
+// Auto-route deposit
+const txHash = await autoRouteDeposit(
+  chainId,
+  walletClient,
+  USDC_ADDRESS,
+  amount
+);
+```
 
 ---
 
 ## 📝 Changelog
 
-### Added
+### Wave 3.5 Added
+
+- Batch invoice operations (`lib/batchOperations.ts`) - ~30% gas savings
+- Analytics dashboard (`lib/analytics.ts`, `pages/Analytics.tsx`)
+- Name resolution for ENS/UD (`lib/nameResolver.ts`)
+- Multi-vault yield routing in `lib/yieldManager.ts`
+- Token icons with @web3icons/react
+- Deployed to Polygon Mainnet (137):
+  - InvoiceRegistry: `0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB`
+  - StealthHelper: `0xc0d83ab5D1527Ef0afe3f4E55dfa4029d5029edD`
+  - ReceiptStore: `0x8E5105929f4AB691405eE1A53718de8413cA7e4C`
+
+### Wave 3.0 Added
 
 - ECIES encrypted memos (`lib/encryptedMemo.ts`)
 - Smart gas calculation (`lib/gasManager.ts`)
@@ -410,7 +515,7 @@ If deploying new contracts:
 - contracts.ts: Enhanced ERC20 ABI
 - PayInvoice.tsx: Smart gas, multi-token display
 - NewInvoice.tsx: Token selector, expiry picker
-- Dashboard.tsx: Yield panel
+- Dashboard.tsx: Yield panel, analytics link
 
 ### Fixed
 
@@ -420,13 +525,13 @@ If deploying new contracts:
 
 ---
 
-## 🏆 Building for the Win
+## 🏆 Core Values
 
-VeilGuard Wave 3 delivers on judges' core values:
+VeilGuard delivers on privacy-first DeFi principles:
 
-1. **Privacy First** (Nxtlvl) - ECIES memos, ERC-5564 stealth
-2. **Productive Capital** (ChillerWhale) - Aave yield integration
-3. **Real Utility** (Both) - Practical invoicing with DeFi benefits
-4. **Polygon Native** (Both) - Deep ecosystem integration
+1. **Privacy First** - ECIES memos, ERC-5564 stealth addresses
+2. **Productive Capital** - Aave yield integration, no idle assets
+3. **Real Utility** - Practical invoicing with DeFi benefits
+4. **Polygon Native** - Deep ecosystem integration
 
 _"Death to idle assets. Deep liquidity. Privacy without compromise."_

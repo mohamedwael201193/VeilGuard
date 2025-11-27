@@ -58,9 +58,11 @@ export interface InvoiceStats {
 export interface YieldPosition {
   protocol: "aave" | "compound" | "morpho";
   token: string;
-  amount: string;
+  balance: string; // Human-readable balance
+  amount: string; // Raw amount (for compatibility)
   apy: number;
-  depositedAt: number;
+  value: string; // USD value (for stablecoins = balance)
+  depositedAt?: number;
 }
 
 // Wave 3: Settings for auto-yield
@@ -68,4 +70,41 @@ export interface MerchantSettings {
   autoYieldEnabled: boolean;
   yieldProtocol: "aave" | "compound" | "morpho";
   minSweepAmount: string; // Minimum amount to trigger auto-yield
+}
+
+// Wave 3.5: Batch operations
+export interface BatchInvoiceResult {
+  successful: number;
+  failed: number;
+  hashes: string[];
+  errors: string[];
+}
+
+// Wave 3.5: Analytics types
+export interface InvoiceAnalytics {
+  totalGMV: Record<string, bigint>;
+  totalInvoices: number;
+  totalPaid: number;
+  totalPending: number;
+  totalExpired: number;
+  conversionRate: number;
+  topTokens: TokenBreakdown[];
+}
+
+export interface TokenBreakdown {
+  symbol: string;
+  count: number;
+  paidCount: number;
+  volume: bigint;
+  percentage: number;
+}
+
+// Wave 3.5: Yield vault comparison
+export interface YieldVault {
+  protocol: "aave" | "morpho" | "compound";
+  name: string;
+  address: string;
+  apy: number;
+  tvl?: bigint;
+  riskScore: number;
 }

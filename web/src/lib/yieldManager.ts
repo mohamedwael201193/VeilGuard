@@ -8,6 +8,7 @@
  * Makes swept funds productive instead of sitting idle
  */
 
+import type { YieldPosition } from "@/types";
 import { type Address, createPublicClient, formatUnits, http } from "viem";
 import { CHAINS, ERC20_ABI } from "./contracts";
 
@@ -334,19 +335,12 @@ export async function withdrawFromAave({
 export async function getYieldPositions(
   chainId: number,
   userAddress: Address
-): Promise<
-  Array<{
-    token: string;
-    apy: number;
-    balance: string;
-    value: string;
-  }>
-> {
+): Promise<YieldPosition[]> {
   if (chainId !== 137) {
     return [];
   }
 
-  const positions = [];
+  const positions: YieldPosition[] = [];
 
   for (const [symbol, aTokenAddress] of Object.entries(AAVE_ATOKENS)) {
     try {
@@ -364,9 +358,11 @@ export async function getYieldPositions(
       if (balance > 0n) {
         const apy = await getAaveApy(chainId, tokenConfig.address as Address);
         positions.push({
+          protocol: "aave",
           token: symbol,
           apy,
           balance: balanceFormatted,
+          amount: balanceFormatted,
           value: balanceFormatted, // For stablecoins, 1:1 with USD
         });
       }
@@ -425,4 +421,256 @@ export async function shouldEnableAutoYield(
   }
 
   return { enabled: true, reason: `Current APY: ${apy}%`, apy };
+}
+
+// ============================================================================
+// MULTI-VAULT YIELD AGGREGATOR - Wave 3.5
+// Routes funds to highest APY across Aave, Morpho, Compound
+// Inspired by Katana's "productive TVL" philosophy
+// ============================================================================
+
+/**
+ * Yield vault information for routing decisions
+ */
+export interface YieldVault {
+  protocol: "aave" | "morpho" | "compound";
+  name: string;
+  address: Address;
+  apy: number;
+  tvl?: bigint;
+  riskScore: number; // 1-10, lower is safer
+}
+
+// Protocol addresses on Polygon mainnet
+const PROTOCOL_ADDRESSES = {
+  aave: AAVE_V3_POOL_POLYGON as Address,
+  // Morpho Blue on Polygon (when available)
+  morpho: "0x0000000000000000000000000000000000000000" as Address,
+  // Compound V3 USDC on Polygon (when available)
+  compound: "0x0000000000000000000000000000000000000000" as Address,
+};
+
+/**
+ * Get APY comparison across all supported protocols
+ *
+ * @param chainId - Chain ID
+ * @param tokenAddress - Token to compare
+ * @returns Array of vault options sorted by APY
+ */
+export async function compareYieldVaults(
+  chainId: number,
+  tokenAddress: Address
+): Promise<YieldVault[]> {
+  if (chainId !== 137) {
+    return [];
+  }
+
+  const vaults: YieldVault[] = [];
+
+  // Get Aave APY (primary protocol)
+  try {
+    const aaveApy = await getAaveApy(chainId, tokenAddress);
+    vaults.push({
+      protocol: "aave",
+      name: "Aave V3",
+      address: PROTOCOL_ADDRESSES.aave,
+      apy: aaveApy,
+      riskScore: 2, // Very safe, battle-tested
+    });
+  } catch (e) {
+    console.warn("Aave APY fetch failed:", e);
+  }
+
+  // Morpho placeholder (when available on Polygon)
+  // Typically offers higher APY with matched lending
+  vaults.push({
+    protocol: "morpho",
+    name: "Morpho Blue",
+    address: PROTOCOL_ADDRESSES.morpho,
+    apy: 0, // Would fetch from Morpho API
+    riskScore: 3,
+  });
+
+  // Compound placeholder (when available on Polygon)
+  vaults.push({
+    protocol: "compound",
+    name: "Compound V3",
+    address: PROTOCOL_ADDRESSES.compound,
+    apy: 0, // Would fetch from Compound API
+    riskScore: 2,
+  });
+
+  // Sort by APY descending
+  return vaults
+    .filter((v) => v.apy > 0 || v.protocol === "aave") // Include Aave even if 0
+    .sort((a, b) => b.apy - a.apy);
+}
+
+/**
+ * Get the best yield vault for a token
+ *
+ * @param chainId - Chain ID
+ * @param tokenAddress - Token address
+ * @param maxRiskScore - Maximum acceptable risk (1-10)
+ * @returns Best vault or null
+ */
+export async function getBestYieldVault(
+  chainId: number,
+  tokenAddress: Address,
+  maxRiskScore: number = 5
+): Promise<YieldVault | null> {
+  const vaults = await compareYieldVaults(chainId, tokenAddress);
+
+  // Filter by risk tolerance and get highest APY
+  const eligible = vaults.filter((v) => v.riskScore <= maxRiskScore);
+
+  return eligible.length > 0 ? eligible[0] : null;
+}
+
+/**
+ * Auto-route deposit to best yield vault
+ *
+ * @param params - Deposit parameters
+ * @returns Transaction hash and selected vault
+ */
+export async function autoRouteDeposit(params: {
+  chainId: number;
+  tokenAddress: Address;
+  amount: bigint;
+  userAddress: Address;
+  walletClient: unknown;
+  maxRiskScore?: number;
+}): Promise<{ hash: Address; vault: YieldVault }> {
+  const {
+    chainId,
+    tokenAddress,
+    amount,
+    userAddress,
+    walletClient,
+    maxRiskScore = 5,
+  } = params;
+
+  const bestVault = await getBestYieldVault(
+    chainId,
+    tokenAddress,
+    maxRiskScore
+  );
+
+  if (!bestVault) {
+    throw new Error("No eligible yield vault found");
+  }
+
+  // Currently only Aave is implemented
+  if (bestVault.protocol === "aave") {
+    const hash = await depositToAave({
+      chainId,
+      tokenAddress,
+      amount,
+      userAddress,
+      walletClient,
+    });
+    return { hash, vault: bestVault };
+  }
+
+  // Future: Add Morpho and Compound deposit implementations
+  throw new Error(`Protocol ${bestVault.protocol} not yet implemented`);
+}
+
+/**
+ * Get total yield positions across all protocols
+ *
+ * @param chainId - Chain ID
+ * @param userAddress - User address
+ * @returns Combined positions from all protocols
+ */
+export async function getAllYieldPositions(
+  chainId: number,
+  userAddress: Address
+): Promise<{
+  positions: YieldPosition[];
+  totalValueUSD: number;
+  weightedAvgApy: number;
+}> {
+  // Get Aave positions
+  const aavePositions = await getYieldPositions(chainId, userAddress);
+
+  // Future: Aggregate from Morpho, Compound, etc.
+  const allPositions = [...aavePositions];
+
+  // Calculate totals
+  let totalValue = 0;
+  let weightedApySum = 0;
+
+  allPositions.forEach((pos) => {
+    const value = parseFloat(pos.balance);
+    totalValue += value;
+    weightedApySum += value * pos.apy;
+  });
+
+  const weightedAvgApy = totalValue > 0 ? weightedApySum / totalValue : 0;
+
+  return {
+    positions: allPositions,
+    totalValueUSD: totalValue,
+    weightedAvgApy: Math.round(weightedAvgApy * 100) / 100,
+  };
+}
+
+/**
+ * Suggest rebalancing opportunities across protocols
+ *
+ * @param chainId - Chain ID
+ * @param userAddress - User address
+ * @returns Rebalancing suggestions
+ */
+export async function suggestRebalancing(
+  chainId: number,
+  userAddress: Address
+): Promise<{
+  suggestion: string;
+  potentialGain: number;
+  fromVault?: YieldVault;
+  toVault?: YieldVault;
+}> {
+  const { positions } = await getAllYieldPositions(chainId, userAddress);
+
+  if (positions.length === 0) {
+    return { suggestion: "No positions to rebalance", potentialGain: 0 };
+  }
+
+  // Check if there's a better vault available
+  for (const pos of positions) {
+    // Get token address from known mappings
+    const tokenAddress = Object.entries(AAVE_ATOKENS).find(
+      ([symbol]) => symbol === pos.token
+    )?.[1];
+
+    if (!tokenAddress) continue;
+
+    const vaults = await compareYieldVaults(chainId, tokenAddress as Address);
+    const currentVault = vaults.find((v) => v.protocol === "aave");
+    const betterVault = vaults.find(
+      (v) => v.protocol !== "aave" && v.apy > (currentVault?.apy || 0)
+    );
+
+    if (betterVault && currentVault) {
+      const apyDiff = betterVault.apy - currentVault.apy;
+      const balance = parseFloat(pos.balance);
+      const potentialGain = (balance * apyDiff) / 100;
+
+      if (apyDiff > 0.5) {
+        // At least 0.5% improvement
+        return {
+          suggestion: `Move ${pos.token} from ${currentVault.name} to ${
+            betterVault.name
+          } for +${apyDiff.toFixed(2)}% APY`,
+          potentialGain,
+          fromVault: currentVault,
+          toVault: betterVault,
+        };
+      }
+    }
+  }
+
+  return { suggestion: "Positions are optimally allocated", potentialGain: 0 };
 }

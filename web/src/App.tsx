@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as HotToaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { WagmiProvider } from "wagmi";
+import Analytics from "./pages/Analytics";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Inbox from "./pages/Inbox";
@@ -32,6 +33,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/invoice/new" element={<NewInvoice />} />
             <Route path="/invoice/:id" element={<InvoiceView />} />
             <Route path="/pay/:invoiceId" element={<PayInvoice />} />

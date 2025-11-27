@@ -9,6 +9,7 @@ import { getAaveApy, getYieldPositions } from "@/lib/yieldManager";
 import { useInvoiceStore } from "@/store/invoiceStore";
 import { motion } from "framer-motion";
 import {
+  BarChart3,
   CheckCircle,
   Clock,
   Coins,
@@ -186,6 +187,15 @@ export default function Dashboard() {
                 >
                   <Wallet className="h-4 w-4 mr-2" />
                   Scan Inbox
+                </Button>
+              </Link>
+              <Link to="/analytics">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start magnetic"
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  View Analytics
                 </Button>
               </Link>
             </div>

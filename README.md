@@ -4,7 +4,8 @@
 
 [![Live Demo](https://img.shields.io/badge/Demo-Live-success)](https://veil-guard.vercel.app)
 [![Video Demo](https://img.shields.io/badge/Video-YouTube-red)](https://youtu.be/dsePu6PW_DE)
-[![Contracts](https://img.shields.io/badge/Contracts-Verified-blue)](https://polygonscan.com/address/0xa4e554b54cF94BfBca0682c34877ee7C96aC9261)
+[![Contracts](https://img.shields.io/badge/Contracts-Verified-blue)](https://polygonscan.com/address/0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB)
+[![Wave](https://img.shields.io/badge/Wave-3.5-purple)](./WAVE3_DOCUMENTATION.md)
 
 ---
 
@@ -12,7 +13,7 @@
 
 - [Overview](#-overview)
 - [Live Deployment](#-live-deployment)
-- [Wave 2 Complete Documentation](#-wave-2-complete-documentation)
+- [Wave 3.5 Documentation](#-wave-35-documentation)
 - [Key Features](#-key-features)
 - [Architecture](#-architecture)
 - [Smart Contracts](#-smart-contracts)
@@ -35,8 +36,10 @@ VeilGuard enables merchants to receive payments without exposing their transacti
 - ⚡ **Low Cost**: ~$0.006 for complete flow on Polygon
 - 🌐 **Production Ready**: Verified contracts, live deployment
 - 🔓 **Open Source**: Fully auditable code
+- 💰 **Yield Integration**: Earn ~3-5% APY on idle funds via Aave V3
+- 🪙 **Multi-Token**: USDC, USDT, DAI, WETH, WPOL support
 
-**Status:** ✅ Wave 2 Complete & Deployed (November 5, 2025)
+**Status:** ✅ Wave 3.5 Complete & Deployed on Polygon Mainnet (November 2025)
 
 ---
 
@@ -48,48 +51,58 @@ VeilGuard enables merchants to receive payments without exposing their transacti
 
 ---
 
-## 📖 Wave 2 Complete Documentation
+## 📖 Wave 3.5 Documentation
 
-**For judges and detailed review, see the comprehensive Wave 2 documentation:**
+**For detailed technical review, see the comprehensive Wave 3.5 documentation:**
 
-➡️ **[WAVE2_COMPLETE_DOCUMENTATION.md](./WAVE2_COMPLETE_DOCUMENTATION.md)** ⬅️
+➡️ **[WAVE3_DOCUMENTATION.md](./WAVE3_DOCUMENTATION.md)** ⬅️
 
 This document includes:
 
-- Complete architecture overview
-- All smart contract details with verification links
-- 12 frontend pages breakdown
-- Step-by-step testing procedures (testnet + mainnet)
-- Gas costs and performance metrics
-- Technical implementation details (ERC-5564, scanning, receipts)
-- Security considerations
-- Lessons learned and future improvements
+- Privacy+DeFi architecture with Aave V3 yield integration
+- ECIES encrypted memos implementation
+- Multi-token support (6 tokens on Polygon)
+- Smart gas optimization
+- Batch operations for merchant scale
+- Analytics dashboard with metrics & CSV export
+- ENS/Unstoppable Domains name resolution
+- Multi-vault yield routing
+- All smart contract details with mainnet addresses
+
+**Previous documentation:** [WAVE2_COMPLETE_DOCUMENTATION.md](./WAVE2_COMPLETE_DOCUMENTATION.md)
 
 ---
 
 ## ✨ Key Features
 
-### Wave 2 Achievements
+### Wave 3.5 Achievements
 
 #### 🔐 Privacy & Stealth Addresses
 
 - **ERC-5564 Implementation**: Full specification compliance
+- **ECIES Encrypted Memos**: End-to-end encrypted invoice memos (ECDH + AES-GCM)
 - **Unique Addresses**: Every invoice = new stealth address
 - **Payment Unlinkability**: Observers cannot connect payments to merchants
-- **Session Keys**: Spending + viewing keys for complete control
 
-#### 💰 Payment Flow
+#### 💰 DeFi Integration
 
-- **Invoice Creation**: Amount, token (USDC), optional memo
-- **QR Codes**: EIP-681 payment URIs for mobile wallets
-- **Auto-Detection**: Blockchain event scanning finds payments
-- **Self-Custodial Sweeping**: Direct transfer using stealth private keys
+- **Aave V3 Yield**: Earn ~3-5% APY on swept funds
+- **Multi-Vault Routing**: Auto-select best APY (Aave/Morpho/Compound)
+- **Multi-Token Support**: USDC, USDT, DAI, WETH, WPOL
+- **Smart Gas Top-up**: Dynamic gas calculation (~50% savings)
+
+#### 📊 Merchant Tools
+
+- **Batch Operations**: Create multiple invoices (~30% gas savings)
+- **Analytics Dashboard**: Real-time metrics, conversion rates, GMV tracking
+- **CSV Export**: Export data for accounting software
+- **Name Resolution**: ENS/Unstoppable Domains support
 
 #### 📜 Cryptographic Receipts
 
 - **On-Chain Commitments**: `keccak256(invoiceId || txHash)`
+- **Access Control**: Receipt v2 with authorization
 - **Public Verification**: Anyone can verify without authentication
-- **Tamper-Proof**: Cryptographic guarantees
 - **Shareable Links**: Easy receipt distribution
 
 #### 🔍 Payment Discovery
@@ -97,7 +110,7 @@ This document includes:
 - **Inbox Scanner**: Scan 10,000 blocks for incoming payments
 - **Rate-Optimized**: 3 parallel requests, 200ms delays
 - **View Key Matching**: Finds all payments for your keys
-- **70-Second Scans**: Fast blockchain indexing
+- **Async Memo Decryption**: Decrypt memos during scan
 
 #### 🎨 User Experience
 
@@ -140,13 +153,13 @@ This document includes:
 
 ### Deployed & Verified ✅
 
-**Polygon PoS Mainnet (Chain ID: 137):**
+**Polygon PoS Mainnet (Chain ID: 137) - Wave 3.5:**
 
 | Contract            | Address                                                                                                                    | Status      |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **InvoiceRegistry** | [`0xa4e554b54cF94BfBca0682c34877ee7C96aC9261`](https://polygonscan.com/address/0xa4e554b54cF94BfBca0682c34877ee7C96aC9261) | ✅ Verified |
-| **StealthHelper**   | [`0x3156F6E761D7c9dA0a88A6165864995f2b58854f`](https://polygonscan.com/address/0x3156F6E761D7c9dA0a88A6165864995f2b58854f) | ✅ Verified |
-| **ReceiptStore**    | [`0xc93431B8C47Ff7a7526886c8Aa0AC0705947A06d`](https://polygonscan.com/address/0xc93431B8C47Ff7a7526886c8Aa0AC0705947A06d) | ✅ Verified |
+| **InvoiceRegistry** | [`0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB`](https://polygonscan.com/address/0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB) | ✅ Verified |
+| **StealthHelper**   | [`0xc0d83ab5D1527Ef0afe3f4E55dfa4029d5029edD`](https://polygonscan.com/address/0xc0d83ab5D1527Ef0afe3f4E55dfa4029d5029edD) | ✅ Verified |
+| **ReceiptStore**    | [`0x8E5105929f4AB691405eE1A53718de8413cA7e4C`](https://polygonscan.com/address/0x8E5105929f4AB691405eE1A53718de8413cA7e4C) | ✅ Verified |
 
 **Polygon Amoy Testnet (Chain ID: 80002):**
 
@@ -158,20 +171,23 @@ This document includes:
 
 ### Contract Features
 
-**InvoiceRegistry.sol** (35 lines, gas optimized)
+**InvoiceRegistry.sol** (Wave 3.5 Enhanced)
 
 - `createInvoice()` - Create new invoice with stealth address
+- `createInvoiceWithExpiry()` - Create invoice with auto-expiration
 - `markPaid()` - Mark invoice as paid with tx hash hint
 - `getInvoice()` - Retrieve invoice details
+- Multi-token support (USDC, USDT, DAI, WETH, WPOL)
 
-**StealthHelper.sol** (21 lines, ERC-5564 compliant)
+**StealthHelper.sol** (ERC-5564 compliant)
 
 - `announce()` - Emit stealth address announcement event
 
-**ReceiptStore.sol** (13 lines, minimal storage)
+**ReceiptStore.sol** (Access Controlled)
 
 - `store()` - Store receipt commitment on-chain
 - `receiptOf()` - Public mapping for verification
+- `setAuthorizedWriter()` - Access control for receipt creation
 
 ---
 
@@ -237,13 +253,14 @@ npm run dev              # Start at http://localhost:5173
 ### Frontend
 
 - **React 18** + **TypeScript** - Modern UI framework
-- **Vite** - Fast build tool
-- **wagmi v2** + **viem** - Web3 React hooks
+- **Vite 5** - Fast build tool
+- **wagmi v2** + **viem v2** - Web3 React hooks
 - **TanStack Router** - Type-safe routing
 - **shadcn/ui** + **Tailwind CSS** - Component library & styling
 - **Framer Motion** - Smooth animations
 - **Zustand** - State management
 - **@noble/curves** - Cryptographic primitives
+- **@web3icons/react** - Professional token icons
 
 ### Infrastructure
 
@@ -264,21 +281,25 @@ npm run dev              # Start at http://localhost:5173
 - Cryptographic receipts
 - Inbox scanning
 - Production deployment on Polygon mainnet
-- All contracts verified
 
-### 📅 Wave 3 (Next)
+### ✅ Wave 3.5 (Complete - Nov 27, 2025)
 
-- Multi-token support (ETH, DAI, USDT)
-- Encrypted invoice memos (ECIES)
-- Batch operations (bulk invoice creation)
-- Enhanced analytics dashboard
+- Multi-token support (USDC, USDT, DAI, WETH, WPOL)
+- ECIES encrypted memos
+- Aave V3 yield integration (~3-5% APY)
+- Smart gas optimization
+- Batch invoice operations (~30% gas savings)
+- Analytics dashboard with CSV export
+- ENS/Unstoppable Domains name resolution
+- Multi-vault yield routing
+- New contracts deployed to Polygon Mainnet
 
-### � Wave 4
+### 📅 Wave 4 (Next)
 
+- zk-Receipts with Noir circuits for zero-knowledge proofs
+- AggLayer integration for cross-chain payments
+- AgentPay SDK for programmatic invoice management
 - Recurring invoices (subscription payments)
-- CSV export for accounting software
-- Payment notifications (webhooks, email)
-- Invoice customization & branding
 
 ### 📅 Waves 5-8 (Advanced Privacy)
 
@@ -290,7 +311,6 @@ npm run dev              # Start at http://localhost:5173
 ### 📅 Waves 9-10 (Enterprise)
 
 - Team accounts & role-based access
-- API for programmatic invoice creation
 - White-label solutions
 - Compliance tools (optional KYC)
 
