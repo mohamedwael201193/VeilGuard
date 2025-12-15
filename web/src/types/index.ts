@@ -108,3 +108,82 @@ export interface YieldVault {
   tvl?: bigint;
   riskScore: number;
 }
+
+// Wave 4: AI Invoice Intelligence
+export interface RiskAssessment {
+  score: number;
+  level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  factors: RiskFactor[];
+  recommendation: string;
+  confidence: number;
+}
+
+export interface RiskFactor {
+  name: string;
+  weight: number;
+  score: number;
+  description: string;
+}
+
+// Wave 4: x402 Agent Payments
+export interface AgentCredentials {
+  agentId: string;
+  publicKey: string;
+  permissions: AgentPermission[];
+  createdAt: number;
+  expiresAt?: number;
+}
+
+export interface AgentPermission {
+  action: "PAY" | "CREATE" | "VIEW" | "SWEEP";
+  maxAmount?: string;
+  allowedTokens?: string[];
+}
+
+export interface RecurringPayment {
+  id: string;
+  agentId: string;
+  merchantAddress: string;
+  amount: string;
+  token: string;
+  frequency: "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY";
+  nextPayment: number;
+  status: "ACTIVE" | "PAUSED" | "CANCELLED" | "EXPIRED";
+}
+
+// Wave 4: Cross-Chain Payments
+export interface CrossChainInvoice {
+  id: string;
+  polygonInvoiceId: string;
+  amount: string;
+  token: string;
+  acceptedChains: string[];
+  status: "PENDING" | "BRIDGING" | "CONFIRMING" | "PAID" | "EXPIRED";
+  sourceChain?: string;
+  sourceTxHash?: string;
+}
+
+export interface CrossChainPayment {
+  invoiceId: string;
+  sourceChain: string;
+  destinationChain: string;
+  amount: string;
+  token: string;
+  bridgeProtocol: "layerzero" | "agglayer" | "ccip";
+  status: "INITIATED" | "BRIDGING" | "CONFIRMING" | "COMPLETED" | "FAILED";
+}
+
+// Wave 4: Gasless Transactions
+export interface GaslessConfig {
+  enabled: boolean;
+  paymaster: "biconomy" | "pimlico" | "stackup" | "custom";
+  maxSponsoredPerDay: number;
+  sessionKeyEnabled: boolean;
+}
+
+export interface SessionKey {
+  publicKey: string;
+  validUntil: number;
+  permissions: string[];
+  status: "ACTIVE" | "REVOKED" | "EXPIRED";
+}

@@ -4,7 +4,18 @@ import { Header } from "@/components/layout/Header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock, Shield, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  Bot,
+  Brain,
+  ChevronRight,
+  Fuel,
+  Globe,
+  Lock,
+  Shield,
+  Sparkles,
+  Zap,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Home() {
@@ -161,6 +172,155 @@ export default function Home() {
                 </p>
               </motion.div>
             </div>
+          </div>
+        </section>
+
+        {/* Advanced Features Section */}
+        <section className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+          </div>
+
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center space-y-4 mb-12"
+            >
+              <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+                <Sparkles className="h-3 w-3 mr-1" />
+                Advanced Features
+              </Badge>
+              <h2 className="text-4xl font-bold">
+                Enhanced{" "}
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                  Privacy + DeFi
+                </span>
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Smart analytics, automated payments, cross-chain support, and
+                gasless transactions
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0 }}
+                className="glass p-6 rounded-lg space-y-4 hover:border-purple-500/30 hover:shadow-purple-500/10 hover:shadow-lg transition-all group"
+              >
+                <div className="p-3 bg-purple-500/20 rounded-lg w-fit group-hover:scale-110 transition-transform">
+                  <Brain className="h-6 w-6 text-purple-400" />
+                </div>
+                <h3 className="text-lg font-bold">Smart Analytics</h3>
+                <p className="text-sm text-muted-foreground">
+                  Intelligent fraud detection, payment prediction, and merchant
+                  reputation scoring.
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">
+                    Risk Score
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    Anomaly Detection
+                  </Badge>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="glass p-6 rounded-lg space-y-4 hover:border-cyan-500/30 hover:shadow-cyan-500/10 hover:shadow-lg transition-all group"
+              >
+                <div className="p-3 bg-cyan-500/20 rounded-lg w-fit group-hover:scale-110 transition-transform">
+                  <Bot className="h-6 w-6 text-cyan-400" />
+                </div>
+                <h3 className="text-lg font-bold">Automated Payments</h3>
+                <p className="text-sm text-muted-foreground">
+                  Schedule recurring payments with budget controls and smart
+                  automation.
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">
+                    Recurring
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    Budget Limits
+                  </Badge>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="glass p-6 rounded-lg space-y-4 hover:border-blue-500/30 hover:shadow-blue-500/10 hover:shadow-lg transition-all group"
+              >
+                <div className="p-3 bg-blue-500/20 rounded-lg w-fit group-hover:scale-110 transition-transform">
+                  <Globe className="h-6 w-6 text-blue-400" />
+                </div>
+                <h3 className="text-lg font-bold">Cross-Chain</h3>
+                <p className="text-sm text-muted-foreground">
+                  Pay from any chain. LayerZero bridges USDC from Ethereum,
+                  Arbitrum, Base & more.
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">
+                    6 Chains
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    LayerZero
+                  </Badge>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="glass p-6 rounded-lg space-y-4 hover:border-yellow-500/30 hover:shadow-yellow-500/10 hover:shadow-lg transition-all group"
+              >
+                <div className="p-3 bg-yellow-500/20 rounded-lg w-fit group-hover:scale-110 transition-transform">
+                  <Fuel className="h-6 w-6 text-yellow-400" />
+                </div>
+                <h3 className="text-lg font-bold">Gasless</h3>
+                <p className="text-sm text-muted-foreground">
+                  ERC-4337 Account Abstraction. Zero gas fees. "Grandma UX"
+                  simplicity.
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">
+                    Biconomy
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    Sponsored
+                  </Badge>
+                </div>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="text-center mt-8"
+            >
+              <Link to="/features">
+                <Button variant="outline" className="glass group">
+                  Explore All Features
+                  <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </motion.div>
           </div>
         </section>
 

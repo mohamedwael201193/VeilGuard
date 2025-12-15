@@ -9,6 +9,7 @@ import {
   Map,
   Menu,
   Shield,
+  Sparkles,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -21,6 +22,7 @@ export function Header() {
   const navItems = [
     { path: "/", label: "Home", icon: Shield },
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/features", label: "Pro", icon: Sparkles },
     { path: "/inbox", label: "Inbox", icon: Inbox },
     { path: "/security", label: "Security", icon: Lock },
     { path: "/roadmap", label: "Roadmap", icon: Map },

@@ -15,6 +15,7 @@ import Legal from "./pages/Legal";
 import NewInvoice from "./pages/NewInvoice";
 import NotFound from "./pages/NotFound";
 import PayInvoice from "./pages/PayInvoice";
+import ProFeatures from "./pages/ProFeatures";
 import Receipts from "./pages/Receipts";
 import Roadmap from "./pages/Roadmap";
 import Security from "./pages/Security";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/security" element={<Security />} />
             <Route path="/verify" element={<VerifyReceipt />} />
             <Route path="/roadmap" element={<Roadmap />} />
+            <Route path="/features" element={<ProFeatures />} />
             <Route path="/legal" element={<Legal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

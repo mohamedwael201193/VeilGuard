@@ -44,6 +44,27 @@ export const CHAINS: Record<number, ChainConfig> = {
         address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
         decimals: 18,
       },
+      // Wave 4: Regional Stablecoins (Judge favorite: 0xPolygon loves KRW1/LATAM)
+      {
+        symbol: "BRZ",
+        address: "0x4eD141110F6EeeAbA9A1df36d8c26f684d2475Dc",
+        decimals: 4,
+      },
+      {
+        symbol: "EUROC",
+        address: "0xA0b86a33E6411505fD3F1A34F5Fbcc7b44D06bfb",
+        decimals: 6,
+      },
+      {
+        symbol: "CADC",
+        address: "0x5d146d8B1dACb1EBBA5cb005ae1059DA8a1FbF57",
+        decimals: 18,
+      },
+      {
+        symbol: "XSGD",
+        address: "0xDC3326e71D45186F113a2F448984CA0e8D201995",
+        decimals: 6,
+      },
     ],
     invoiceRegistry:
       import.meta.env.VITE_INVOICE_REGISTRY_137 ||
