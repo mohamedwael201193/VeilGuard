@@ -142,9 +142,13 @@ export function genInvoiceStealth(meta: {
   // Derive stealth address using the spec-compliant method
   const { stealthAddress } = deriveStealthKeys(meta, ephPubWith0x);
 
+  // Expose ephemeral private key for memo encryption (Wave 5)
+  const ephPrivHex = `0x${bytesToHex(ephPriv)}` as `0x${string}`;
+
   return {
     stealthAddress,
     ephemeralPubKey: ephPubWith0x,
+    ephemeralPrivKey: ephPrivHex,
     metadata: `0x${viewTag.slice(2, 4)}` as `0x${string}`, // single byte view tag
   };
 }

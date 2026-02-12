@@ -1,4 +1,5 @@
 import { ConnectButton } from "@/components/ConnectButton";
+import { BuyCryptoCTA } from "@/components/FiatOnRamp";
 import { NetworkSwitcher } from "@/components/NetworkSwitcher";
 import { TokenBadge } from "@/components/TokenSelector";
 import { Button } from "@/components/ui/button";
@@ -400,6 +401,7 @@ export default function PayInvoice() {
             </Button>
           </div>
         ) : (
+          <>
           <Button
             onClick={handlePay}
             disabled={isPaying}
@@ -417,6 +419,15 @@ export default function PayInvoice() {
               </>
             )}
           </Button>
+          <div className="mt-3 text-center">
+            <p className="text-xs text-gray-500 mb-2">Don't have enough {invoiceData.tokenSymbol}?</p>
+            <BuyCryptoCTA
+              walletAddress={address}
+              cryptoCurrency={invoiceData.tokenSymbol === "USDC" || invoiceData.tokenSymbol === "USDT" ? invoiceData.tokenSymbol : "USDC"}
+              fiatAmount={invoiceData.amount}
+            />
+          </div>
+          </>
         )}
 
         <p className="text-xs text-gray-500 text-center mt-4">

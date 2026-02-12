@@ -23,6 +23,29 @@ export function generateInvoiceLink(invoiceId: string): string {
 }
 
 /**
+ * Generate a clickable web URL for POS payments.
+ * Unlike the ethereum: URI (for wallet QR scanning), this is a normal
+ * https:// link that opens the app's /pay page with payment details.
+ */
+export function generatePOSWebLink(opts: {
+  recipientAddress: string;
+  amount: string;
+  tokenAddress: string;
+  tokenSymbol: string;
+  chainId: number;
+}): string {
+  const baseUrl = window.location.origin;
+  const params = new URLSearchParams({
+    to: opts.recipientAddress,
+    amount: opts.amount,
+    token: opts.tokenAddress,
+    symbol: opts.tokenSymbol,
+    chainId: opts.chainId.toString(),
+  });
+  return `${baseUrl}/pay/pos?${params.toString()}`;
+}
+
+/**
  * Generate payment link for customers to pay invoice
  * This creates a user-friendly payment page with stealth address announcement
  */

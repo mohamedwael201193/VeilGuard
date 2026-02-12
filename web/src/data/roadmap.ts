@@ -6,7 +6,7 @@ export const waves: Wave[] = [
     number: 2,
     title: "Mainnet Private Invoices (Testnet complete, mainnet gating)",
     dateRange: "Nov 4–18, 2025",
-    status: "In Progress",
+    status: "Done",
     objectives: [
       "Deliver private invoicing via ERC-5564 stealth addresses with smooth UX.",
       "Prove end-to-end flow: create → pay → detect → sweep → receipt → verify.",
@@ -87,7 +87,7 @@ export const waves: Wave[] = [
     title:
       "Differentiation Pack: Audit-grade Receipts + Smart Gas + Refunds + Memos",
     dateRange: "Nov 19–Dec 3, 2025",
-    status: "Planned",
+    status: "Done",
     objectives: [
       "Eliminate replay risk and tighten auth around receipts.",
       "Reduce gas waste and add merchant-friendly refund mechanics.",
@@ -147,9 +147,9 @@ export const waves: Wave[] = [
   {
     id: "wave-4",
     number: 4,
-    title: "zk-Receipt V1",
+    title: "Pro Features: AI Intelligence, Agent Payments, Cross-Chain & Gasless",
     dateRange: "Dec 4–18, 2025",
-    status: "Planned",
+    status: "Done",
     objectives: [
       "Zero-knowledge proof of payment without revealing payer/stealth linkage.",
       "Provide a hosted verification API and client SDK.",
@@ -178,31 +178,60 @@ export const waves: Wave[] = [
   {
     id: "wave-5",
     number: 5,
-    title: "RWA Attestations",
+    title: "Polygon Payments Platform: POS, Fiat On-Ramp & Sharing",
     dateRange: "Dec 19, 2025–Jan 2, 2026",
-    status: "Planned",
+    status: "In Progress",
     objectives: [
-      "Link off-chain merchant facts to invoices via attestations.",
-      "Add verifier staking to elevate trust in receipts.",
+      "Align with Polygon's 2026 payments infrastructure pivot (Bruno DevRel podcast).",
+      "Fix all broken sections, deploy mainnet contracts, add merchant-ready features.",
+      "Target all user segments: merchants, enterprises, and developers.",
     ],
     deliverables: [
-      {
-        label: "EAS/AttestationStation integration for merchant/invoice facts",
-      },
-      {
-        label:
-          "Verifier staking + slashing conditions (off-chain policy, on-chain markers)",
-      },
-      { label: "Cross-chain verification hooks" },
+      { label: "Real-time payment watcher via ERC-20 Transfer events", done: true },
+      { label: "Encrypted memos wired with ECDH + AES-GCM", done: true },
+      { label: "Toast unification to Sonner (removed react-hot-toast)", done: true },
+      { label: "Analytics trend calculation (7d vs 7d)", done: true },
+      { label: "Yield routing: real Compound V3 address, Morpho graceful skip", done: true },
+      { label: "NotFound page dark theme redesign", done: true },
+      { label: "Batch invoice creation (createInvoiceBatch — up to 20 per tx)", done: true },
+      { label: "Mainnet deployment: InvoiceRegistry, StealthHelper, ReceiptStore on Polygon 137", done: true },
+      { label: "Merchant POS Mode — tablet-optimized payment terminal with QR codes", done: true },
+      { label: "Fiat On-Ramp — Transak widget integration for buying crypto", done: true },
+      { label: "Payment Link Sharing — WhatsApp, Telegram, Email, Web Share API", done: true },
+      { label: "Updated Roadmap data (Waves 2-4 marked Done)", done: true },
+      { label: "Updated ProFeatures page with Wave 5 features", done: true },
     ],
     acceptanceCriteria: [
-      "Attestations retrievable from verify page and API",
-      "Staked verifiers visible with risk badges",
+      "All 3 contracts deployed and linked on Polygon mainnet (137).",
+      "POS mode generates QR, detects payment, shows confetti success screen.",
+      "Payment links shareable via WhatsApp, Telegram, Email in one tap.",
+      "Fiat on-ramp banner appears for insufficient balance scenarios.",
+      "npm run build passes with zero errors.",
     ],
-    dependencies: ["EAS/AS, indexers."],
-    risks: ["Attestation UX complexity; provide clear trust labels."],
-    demoPlan: ["Show verified merchant attestation next to receipt."],
-    kpis: ["% invoices with attestations; verifier participation."],
+    dependencies: [
+      "Polygon mainnet RPC (Alchemy).",
+      "wagmi v2 + viem v2 for contract interactions.",
+      "Transak for fiat on-ramp (demo/staging key).",
+    ],
+    risks: [
+      "Gas price volatility on Polygon mainnet — mitigated by removing fixed gasPrice.",
+      "Pending transaction nonces — mitigated by cancellation self-transfers.",
+    ],
+    demoPlan: [
+      "POS mode: enter amount → generate QR → customer scans → payment detected → confetti.",
+      "Share payment link via WhatsApp/Telegram from QR screen.",
+      "Insufficient balance → Buy Crypto CTA → Transak opens.",
+      "Create batch of invoices in single transaction.",
+    ],
+    kpis: [
+      "POS payment detection < 10s from on-chain confirmation.",
+      "Batch invoice gas savings ~30% vs individual creates.",
+      "Zero build errors after all changes.",
+    ],
+    notes: [
+      "Mainnet contract addresses in .env.local.",
+      "Deployer: 0xd462cc45b06Ae45daCd93F7B3979758C7b4a2cc0.",
+    ],
   },
 
   {

@@ -3,11 +3,12 @@ import { NetworkSwitcher } from "@/components/NetworkSwitcher";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
+  Handshake,
   Inbox,
   LayoutDashboard,
   Lock,
-  Map,
   Menu,
+  MonitorSmartphone,
   Shield,
   Sparkles,
   X,
@@ -24,8 +25,9 @@ export function Header() {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/features", label: "Pro", icon: Sparkles },
     { path: "/inbox", label: "Inbox", icon: Inbox },
+    { path: "/pos", label: "POS", icon: MonitorSmartphone },
+    { path: "/escrow", label: "Escrow", icon: Handshake },
     { path: "/security", label: "Security", icon: Lock },
-    { path: "/roadmap", label: "Roadmap", icon: Map },
   ];
 
   const isActive = (path: string) => location.pathname === path;

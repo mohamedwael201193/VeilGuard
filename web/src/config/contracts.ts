@@ -8,6 +8,7 @@ export const addresses = {
     INVOICE_REGISTRY: import.meta.env.VITE_INVOICE_REGISTRY_137,
     STEALTH_HELPER: import.meta.env.VITE_STEALTH_HELPER_137,
     RECEIPT_STORE: import.meta.env.VITE_RECEIPT_STORE_137,
+    ESCROW: import.meta.env.VITE_ESCROW_137,
   },
 };
 

@@ -54,6 +54,42 @@ export interface DailyStats {
 }
 
 /**
+ * Calculate trend by comparing last 7 days vs previous 7 days
+ */
+function calculateTrend(invoices: Invoice[]): TrendData {
+  const now = Date.now();
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+  const recentPaid = invoices.filter(
+    (inv) => inv.status === "paid" && inv.paidAt && inv.paidAt > now - oneWeek
+  ).length;
+
+  const previousPaid = invoices.filter(
+    (inv) =>
+      inv.status === "paid" &&
+      inv.paidAt &&
+      inv.paidAt > now - 2 * oneWeek &&
+      inv.paidAt <= now - oneWeek
+  ).length;
+
+  if (previousPaid === 0 && recentPaid === 0) {
+    return { direction: "flat", percentChange: 0, period: "7d" };
+  }
+
+  if (previousPaid === 0) {
+    return { direction: "up", percentChange: 100, period: "7d" };
+  }
+
+  const change = ((recentPaid - previousPaid) / previousPaid) * 100;
+
+  return {
+    direction: change > 5 ? "up" : change < -5 ? "down" : "flat",
+    percentChange: Math.round(Math.abs(change)),
+    period: "7d",
+  };
+}
+
+/**
  * Calculate comprehensive metrics from invoice list
  *
  * @param invoices - Array of invoices to analyze
@@ -132,12 +168,8 @@ export function calculateMetrics(
     .sort((a, b) => Number(b.volume - a.volume))
     .slice(0, 5);
 
-  // Calculate trend (placeholder - would need historical data)
-  const trend: TrendData = {
-    direction: "flat",
-    percentChange: 0,
-    period: "7d",
-  };
+  // Calculate trend: compare last 7d vs previous 7d
+  const trend: TrendData = calculateTrend(invoices);
 
   return {
     totalGMV,

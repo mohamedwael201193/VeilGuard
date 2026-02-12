@@ -25,6 +25,7 @@ import {
   storeCommitment,
 } from "@/lib/receipts";
 import { deriveStealthPriv, refundUsdc, sweepUsdc } from "@/lib/sweeper";
+import { usePaymentDetection } from "@/lib/usePaymentWatcher";
 import { useInvoiceStore } from "@/store/invoiceStore";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
@@ -44,7 +45,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { parseUnits } from "viem";
 import {
@@ -85,35 +86,38 @@ export default function InvoiceView() {
   // Use refs to store keys in memory only (never persisted)
   const keysRef = useRef<{ spend: string; view: string } | null>(null);
 
+  // Live payment detection via ERC-20 Transfer events
+  const { detected: paymentDetected, txHash: detectedTxHash, receivedAmount, payerAddress: detectedPayer } =
+    usePaymentDetection({
+      tokenAddress: invoice?.tokenAddress || "",
+      stealthAddress: invoice?.stealthAddress || "",
+      expectedAmount: invoice?.amount,
+      tokenDecimals: invoice?.tokenDecimals || 6,
+      chainId,
+      enabled: !!invoice && invoice.status !== "paid",
+    });
+
+  // When payment detected, auto-update invoice
+  useEffect(() => {
+    if (paymentDetected && detectedTxHash && invoice && invoice.status !== "paid") {
+      // Store payment tx hash for mark-paid
+      localStorage.setItem(
+        `invoice_payment_${invoice.id}`,
+        JSON.stringify({ txHash: detectedTxHash, timestamp: Date.now(), amount: receivedAmount })
+      );
+
+      if (detectedPayer) setPayerAddress(detectedPayer);
+
+      toast.success("Payment detected! 🎉", { description: `${receivedAmount} received` });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+  }, [paymentDetected, detectedTxHash]);
+
   useEffect(() => {
     if (id) {
       setInvoice(getInvoice(id));
     }
   }, [id, getInvoice]);
-
-  // Watch for payment events
-  useEffect(() => {
-    if (!invoice || invoice.status === "paid" || !publicClient) return;
-
-    const watchPayment = async () => {
-      setIsWatching(true);
-      try {
-        // Watch for Transfer events to the stealth address
-        // In production, you'd use publicClient.watchContractEvent
-        // For now, we'll poll periodically
-        const checkBalance = async () => {
-          // TODO: Implement actual balance checking
-          // This would involve reading ERC20 balance of stealthAddress
-        };
-
-        checkBalance();
-      } catch (error) {
-        console.error("Error watching payment:", error);
-      }
-    };
-
-    watchPayment();
-  }, [invoice, publicClient]);
 
   const handleMarkPaid = async () => {
     if (!invoice || !walletClient || !address) {

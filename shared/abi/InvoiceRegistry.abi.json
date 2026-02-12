@@ -171,6 +171,40 @@
   {
     "inputs": [
       {
+        "internalType": "address[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "stealthAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "memos",
+        "type": "string[]"
+      }
+    ],
+    "name": "createInvoiceBatch",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "invoiceIds",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "token",
         "type": "address"
@@ -297,6 +331,25 @@
         "internalType": "uint256",
         "name": "expiresAt",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "invoiceId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "isActive",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { announceStealth } from "@/lib/announce";
 import { getChainConfig } from "@/lib/contracts";
-import { generateMetaAddress } from "@/lib/encryptedMemo";
+import { encryptMemo, generateMetaAddress } from "@/lib/encryptedMemo";
 import { genStealth } from "@/lib/stealthDemo";
 import { genInvoiceStealth } from "@/lib/stealthSpec";
 import { useInvoiceStore } from "@/store/invoiceStore";
@@ -17,7 +17,7 @@ import type { Invoice, TokenConfig } from "@/types";
 import { motion } from "framer-motion";
 import { Clock, Info, Loader2, Lock } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import {
   createPublicClient,
@@ -96,20 +96,25 @@ export default function NewInvoice() {
       let stealthData: {
         stealthAddress: `0x${string}`;
         ephemeralPubKey: `0x${string}`;
+        ephemeralPrivKey?: `0x${string}`;
         metadata: `0x${string}`;
       };
+
+      // Keys used for spec mode (needed for memo encryption later)
+      let spendingPriv: `0x${string}` | undefined;
+      let viewingPriv: `0x${string}` | undefined;
 
       if (stealthMode === "spec") {
         // Use ERC-5564 compliant stealth derivation
         // Derive deterministic private keys from wallet address for meta-address
-        const spendingPriv = keccak256(
+        spendingPriv = keccak256(
           encodePacked(
             ["string", "address"],
             ["spending", address as `0x${string}`]
           )
         ) as `0x${string}`;
 
-        const viewingPriv = keccak256(
+        viewingPriv = keccak256(
           encodePacked(
             ["string", "address"],
             ["viewing", address as `0x${string}`]
@@ -261,15 +266,16 @@ export default function NewInvoice() {
         );
       }
 
-      // Wave 3: Encrypt memo if enabled
+      // Wave 5: Encrypt memo if enabled
       let encryptedMemo: string | undefined;
-      if (memo && encryptMemoEnabled && stealthMode === "spec") {
+      if (memo && encryptMemoEnabled && stealthMode === "spec" && stealthData.ephemeralPrivKey && spendingPriv && viewingPriv) {
         try {
           const { viewPubKey } = generateMetaAddress(spendingPriv, viewingPriv);
-          // Note: We need the ephemeral private key for encryption
-          // For now, store plaintext memo but flag as should-be-encrypted
-          // Full encryption requires changes to stealth generation to expose ephPriv
-          encryptedMemo = undefined; // Will implement full encryption in next iteration
+          encryptedMemo = await encryptMemo(
+            memo,
+            stealthData.ephemeralPrivKey,
+            viewPubKey
+          );
         } catch (e) {
           console.warn("Memo encryption skipped:", e);
         }

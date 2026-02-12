@@ -38,10 +38,13 @@ import {
   ChevronRight,
   Clock,
   Coins,
+  CreditCard,
   Fuel,
   Globe,
   LineChart,
+  MonitorSmartphone,
   RefreshCw,
+  Share2,
   Shield,
   Sparkles,
   TrendingUp,
@@ -214,21 +217,25 @@ export default function ProFeatures() {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              AI Intelligence, Automated Payments, Cross-Chain Support & Gasless
-              Transactions
+              AI Intelligence, POS Mode, Fiat On-Ramp, Payment Sharing, Cross-Chain &
+              Gasless Transactions
             </p>
           </motion.div>
 
           {/* Feature Tabs */}
-          <Tabs defaultValue="ai" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-4 glass">
+          <Tabs defaultValue="wave5" className="space-y-8">
+            <TabsList className="grid w-full grid-cols-5 glass">
+              <TabsTrigger value="wave5" className="gap-2">
+                <Sparkles className="h-4 w-4" />
+                <span className="hidden md:inline">Wave 5</span>
+              </TabsTrigger>
               <TabsTrigger value="ai" className="gap-2">
                 <Brain className="h-4 w-4" />
                 <span className="hidden md:inline">AI Intelligence</span>
               </TabsTrigger>
               <TabsTrigger value="agents" className="gap-2">
                 <Bot className="h-4 w-4" />
-                <span className="hidden md:inline">Agent Payments</span>
+                <span className="hidden md:inline">Agents</span>
               </TabsTrigger>
               <TabsTrigger value="crosschain" className="gap-2">
                 <Globe className="h-4 w-4" />
@@ -239,6 +246,113 @@ export default function ProFeatures() {
                 <span className="hidden md:inline">Gasless</span>
               </TabsTrigger>
             </TabsList>
+
+            {/* Wave 5 Features Tab */}
+            <TabsContent value="wave5" className="space-y-6">
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* POS Mode */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                  <Card className="glass p-6 space-y-4 h-full">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-lime-500/20">
+                        <MonitorSmartphone className="h-5 w-5 text-lime-400" />
+                      </div>
+                      <h3 className="text-lg font-semibold">POS Mode</h3>
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 ml-auto">Live</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Tablet-optimized payment terminal. Enter amount, generate QR,
+                      detect payment in real-time with confetti celebration.
+                    </p>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Quick amount presets ($5, $10, $25, $50)</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />EIP-681 QR code generation</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Live payment detection via Transfer events</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Today's sales sidebar with transaction history</li>
+                    </ul>
+                    <Link to="/pos">
+                      <Button className="w-full mt-2 bg-primary hover:bg-primary/90">
+                        Open POS Mode <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </Link>
+                  </Card>
+                </motion.div>
+
+                {/* Fiat On-Ramp */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                  <Card className="glass p-6 space-y-4 h-full">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-yellow-500/20">
+                        <CreditCard className="h-5 w-5 text-yellow-400" />
+                      </div>
+                      <h3 className="text-lg font-semibold">Fiat On-Ramp</h3>
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 ml-auto">Live</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Mt Pelerin widget to buy USDC/USDT directly. Auto-detects
+                      insufficient balance and shows "Buy Crypto" CTA.
+                    </p>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Buy crypto with card/bank transfer</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Auto-detect insufficient balance</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Inline CTA + full modal widget</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Polygon network pre-selected</li>
+                    </ul>
+                  </Card>
+                </motion.div>
+
+                {/* Payment Sharing */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                  <Card className="glass p-6 space-y-4 h-full">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-blue-500/20">
+                        <Share2 className="h-5 w-5 text-blue-400" />
+                      </div>
+                      <h3 className="text-lg font-semibold">Payment Sharing</h3>
+                      <Badge className="bg-green-500/20 text-green-300 border-green-500/30 ml-auto">Live</Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Share payment links instantly via WhatsApp, Telegram, Email,
+                      or the Web Share API. One-tap sharing from POS and invoice views.
+                    </p>
+                    <ul className="text-xs space-y-1 text-muted-foreground">
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />WhatsApp deep link</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Telegram share</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Email with pre-filled subject/body</li>
+                      <li className="flex items-center gap-2"><CheckCircle className="h-3 w-3 text-green-400" />Native Web Share API (mobile)</li>
+                    </ul>
+                  </Card>
+                </motion.div>
+              </div>
+
+              {/* Batch Invoices + Mainnet Info */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card className="glass p-6 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-violet-500/20">
+                      <Zap className="h-5 w-5 text-violet-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold">Batch Invoices</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Create up to 20 invoices in a single transaction with <code>createInvoiceBatch()</code>.
+                    Saves ~30% gas vs individual creates.
+                  </p>
+                </Card>
+                <Card className="glass p-6 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-green-500/20">
+                      <Shield className="h-5 w-5 text-green-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold">Polygon Mainnet</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    All contracts deployed on Polygon mainnet (chain 137).
+                    InvoiceRegistry, StealthHelper, and ReceiptStore linked and operational.
+                  </p>
+                </Card>
+              </div>
+            </TabsContent>
 
             {/* AI Intelligence Tab */}
             <TabsContent value="ai" className="space-y-6">
@@ -957,10 +1071,10 @@ export default function ProFeatures() {
             transition={{ delay: 0.5 }}
             className="glass p-8 rounded-lg text-center space-y-4"
           >
-            <h2 className="text-2xl font-bold">Ready to Experience Wave 4?</h2>
+            <h2 className="text-2xl font-bold">Ready to Experience Wave 5?</h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Create your first invoice and explore AI intelligence, agent
-              payments, cross-chain support, and gasless transactions.
+              Try POS mode, create batch invoices, share payment links, and explore
+              AI intelligence with gasless transactions.
             </p>
             <div className="flex justify-center gap-4">
               <Link to="/invoice/new">

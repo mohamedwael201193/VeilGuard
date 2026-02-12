@@ -1,11 +1,12 @@
-# 🛡️ VeilGuard - Private Invoice System for Web3
+# 🛡️ VeilGuard — Private Payments & Invoicing on Polygon
 
-**Privacy-first invoicing on Polygon with ERC-5564 stealth addresses and cryptographic receipts.**
+**Privacy-first invoicing, escrow, and POS payments on Polygon with ERC-5564 stealth addresses, cryptographic receipts, and trustless escrow.**
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live-success)](https://veil-guard.vercel.app)
-[![Video Demo](https://img.shields.io/badge/Video-YouTube-red)](https://youtu.be/dsePu6PW_DE)
-[![Contracts](https://img.shields.io/badge/Contracts-Verified-blue)](https://polygonscan.com/address/0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB)
-[![Wave](https://img.shields.io/badge/Wave-3.5-purple)](./WAVE3_DOCUMENTATION.md)
+[![Live App](https://img.shields.io/badge/App-Live-success)](https://veil-guard.vercel.app)
+[![Polygon Mainnet](https://img.shields.io/badge/Network-Polygon%20137-8247E5)](https://polygonscan.com)
+[![Wave](https://img.shields.io/badge/Wave-5-purple)]()
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.24-363636)](https://soliditylang.org)
+[![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)
 
 ---
 
@@ -13,374 +14,293 @@
 
 - [Overview](#-overview)
 - [Live Deployment](#-live-deployment)
-- [Wave 3.5 Documentation](#-wave-35-documentation)
-- [Key Features](#-key-features)
-- [Architecture](#-architecture)
 - [Smart Contracts](#-smart-contracts)
-- [Quick Start](#-quick-start)
+- [Features](#-features)
+- [Pages & Routes](#-pages--routes)
+- [Architecture](#-architecture)
 - [Tech Stack](#-tech-stack)
-- [Roadmap](#-roadmap)
+- [Quick Start](#-quick-start)
+- [Environment Variables](#-environment-variables)
 - [License](#-license)
 
 ---
 
 ## 🎯 Overview
 
-VeilGuard enables merchants to receive payments without exposing their transaction history. Each invoice generates a **unique stealth address** using the **ERC-5564 standard**, making payments unlinkable and private while maintaining blockchain transparency.
+VeilGuard enables merchants and freelancers to receive crypto payments without exposing their transaction history. Each invoice generates a **unique stealth address** using the **ERC-5564 standard**, making payments unlinkable and private while maintaining full on-chain verifiability.
 
 ### Why VeilGuard?
 
-- 🔐 **True Privacy**: Cryptographically unlinkable addresses (ERC-5564)
-- 🔑 **Self-Custodial**: Full user control, no intermediaries
-- 📜 **Verifiable Receipts**: On-chain cryptographic commitments
-- ⚡ **Low Cost**: ~$0.006 for complete flow on Polygon
-- 🌐 **Production Ready**: Verified contracts, live deployment
-- 🔓 **Open Source**: Fully auditable code
-- 💰 **Yield Integration**: Earn ~3-5% APY on idle funds via Aave V3
-- 🪙 **Multi-Token**: USDC, USDT, DAI, WETH, WPOL support
-
-**Status:** ✅ Wave 3.5 Complete & Deployed on Polygon Mainnet (November 2025)
-
----
-
-## � Live Deployment
-
-- **🚀 App:** https://veil-guard.vercel.app
-- **📺 Demo Video:** https://youtu.be/dsePu6PW_DE
-- **💻 GitHub:** https://github.com/mohamedwael201193/VeilGuard
+| Feature | Description |
+|---------|-------------|
+| 🔐 **True Privacy** | Cryptographically unlinkable addresses via ERC-5564 |
+| 🔑 **Self-Custodial** | Full user control, no intermediaries |
+| 📜 **Verifiable Receipts** | On-chain cryptographic proof of payment |
+| 🤝 **Trustless Escrow** | On-chain escrow with release, refund & dispute |
+| 💳 **POS Terminal** | Point-of-sale with QR codes & share links |
+| 💱 **Fiat On-Ramp** | Buy crypto via MoonPay, Coinbase, Binance |
+| 🪙 **10+ Tokens** | USDC, USDC.e, USDT, DAI, WETH, WPOL, BRZ, EUROC, CADC, XSGD |
+| ⚡ **Low Cost** | ~$0.006 per transaction on Polygon |
+| 💰 **Yield** | Earn APY on idle funds via Aave V3 routing |
+| 📊 **Analytics** | Revenue charts, payment trends, token breakdown |
 
 ---
 
-## 📖 Wave 3.5 Documentation
+## 🚀 Live Deployment
 
-**For detailed technical review, see the comprehensive Wave 3.5 documentation:**
-
-➡️ **[WAVE3_DOCUMENTATION.md](./WAVE3_DOCUMENTATION.md)** ⬅️
-
-This document includes:
-
-- Privacy+DeFi architecture with Aave V3 yield integration
-- ECIES encrypted memos implementation
-- Multi-token support (6 tokens on Polygon)
-- Smart gas optimization
-- Batch operations for merchant scale
-- Analytics dashboard with metrics & CSV export
-- ENS/Unstoppable Domains name resolution
-- Multi-vault yield routing
-- All smart contract details with mainnet addresses
-
-**Previous documentation:** [WAVE2_COMPLETE_DOCUMENTATION.md](./WAVE2_COMPLETE_DOCUMENTATION.md)
+- **App:** [https://veil-guard.vercel.app](https://veil-guard.vercel.app)
+- **GitHub:** [https://github.com/mohamedwael201193/VeilGuard](https://github.com/mohamedwael201193/VeilGuard)
+- **Network:** Polygon Mainnet (Chain ID: 137)
 
 ---
 
-## ✨ Key Features
+## 📄 Smart Contracts (Polygon Mainnet — Chain 137)
 
-### Wave 3.5 Achievements
+All contracts are deployed on Polygon Mainnet:
 
-#### 🔐 Privacy & Stealth Addresses
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| **InvoiceRegistry** | [`0x241D6923036aD1888734ca6C0E5DEdDC044CF1FC`](https://polygonscan.com/address/0x241D6923036aD1888734ca6C0E5DEdDC044CF1FC) | Invoice creation, status tracking, batch operations |
+| **StealthHelper** | [`0x25A435D4bfF2729639C2937854372Ba099F4bf42`](https://polygonscan.com/address/0x25A435D4bfF2729639C2937854372Ba099F4bf42) | ERC-5564 stealth address announcements |
+| **ReceiptStore** | [`0x24DcE95d6DcC3101256B787a6c19569672260B5E`](https://polygonscan.com/address/0x24DcE95d6DcC3101256B787a6c19569672260B5E) | On-chain cryptographic payment receipts |
+| **VeilEscrow** | [`0x4675f8567d1D6236F76Fe48De2450D5599156af1`](https://polygonscan.com/address/0x4675f8567d1D6236F76Fe48De2450D5599156af1) | Trustless escrow with release/refund/dispute |
 
-- **ERC-5564 Implementation**: Full specification compliance
-- **ECIES Encrypted Memos**: End-to-end encrypted invoice memos (ECDH + AES-GCM)
-- **Unique Addresses**: Every invoice = new stealth address
-- **Payment Unlinkability**: Observers cannot connect payments to merchants
+### Contract Details
 
-#### 💰 DeFi Integration
+#### InvoiceRegistry.sol
+- `createInvoice()` — Create an invoice with stealth address, token, amount, memo
+- `markPaid()` — Mark invoice as paid with tx hash
+- `cancelInvoice()` — Cancel an active invoice
+- `batchCreateInvoices()` — Create multiple invoices in one transaction
+- `batchMarkPaid()` — Mark multiple invoices paid at once
+- Events: `InvoiceCreated`, `InvoicePaid`, `InvoiceCancelled`
 
-- **Aave V3 Yield**: Earn ~3-5% APY on swept funds
-- **Multi-Vault Routing**: Auto-select best APY (Aave/Morpho/Compound)
-- **Multi-Token Support**: USDC, USDT, DAI, WETH, WPOL
-- **Smart Gas Top-up**: Dynamic gas calculation (~50% savings)
+#### StealthHelper.sol
+- `announce()` — Announce stealth address with ephemeral public key
+- Event: `Announcement` (ERC-5564 compliant)
 
-#### 📊 Merchant Tools
+#### ReceiptStore.sol
+- `storeReceipt()` — Store cryptographic receipt hash on-chain
+- `verifyReceipt()` — Verify a receipt's existence and validity
 
-- **Batch Operations**: Create multiple invoices (~30% gas savings)
-- **Analytics Dashboard**: Real-time metrics, conversion rates, GMV tracking
-- **CSV Export**: Export data for accounting software
-- **Name Resolution**: ENS/Unstoppable Domains support
-
-#### 📜 Cryptographic Receipts
-
-- **On-Chain Commitments**: `keccak256(invoiceId || txHash)`
-- **Access Control**: Receipt v2 with authorization
-- **Public Verification**: Anyone can verify without authentication
-- **Shareable Links**: Easy receipt distribution
-
-#### 🔍 Payment Discovery
-
-- **Inbox Scanner**: Scan 10,000 blocks for incoming payments
-- **Rate-Optimized**: 3 parallel requests, 200ms delays
-- **View Key Matching**: Finds all payments for your keys
-- **Async Memo Decryption**: Decrypt memos during scan
-
-#### 🎨 User Experience
-
-- **12 Functional Pages**: Complete merchant & customer flows
-- **Professional UI**: shadcn/ui components, responsive design
-- **Dark Mode**: Glass morphism effects, smooth animations
-- **Wallet Support**: MetaMask, WalletConnect, Rainbow, Coinbase
+#### VeilEscrow.sol
+- `createEscrow(seller, token, amount, deadline, description)` — Buyer deposits tokens
+- `release(escrowId)` — Buyer releases funds to seller
+- `refund(escrowId)` — Buyer reclaims funds
+- `dispute(escrowId)` — Buyer flags escrow as disputed
+- `claimExpired(escrowId)` — Seller claims after deadline passes
+- Events: `EscrowCreated`, `EscrowReleased`, `EscrowRefunded`, `EscrowDisputed`
 
 ---
 
-## �️ Architecture
+## ✨ Features
+
+### Wave 1-2 — Core Privacy Invoicing
+- ERC-5564 stealth address generation (secp256k1)
+- Invoice creation with encrypted memos
+- Stealth payment flow with gas funding
+- On-chain receipt storage & verification
+- Zustand state management with persistence
+
+### Wave 3 — Multi-Token & Production
+- 10+ token support across Polygon mainnet
+- Token selector with @web3icons/react icons
+- Smart gas manager (optimal POL funding)
+- Network switcher (Amoy testnet + Polygon mainnet)
+- Batch invoice operations (create & mark paid)
+
+### Wave 5 — Payments Infrastructure
+- **POS Terminal** — Amount input, QR generation, payment detection, transaction history
+- **Trustless Escrow** — Full on-chain escrow lifecycle (create → release/refund/dispute)
+- **Fiat On-Ramp** — Multi-provider selector (MoonPay, Coinbase, Binance, ChangeNOW)
+- **Payment Sharing** — WhatsApp, Telegram, Email, Web Share API
+- **Analytics Dashboard** — Revenue trends, token breakdown, payment charts
+- **Payment Watcher** — Real-time on-chain payment detection
+- **Yield Routing** — Aave V3 integration for idle fund APY
+- **AI Invoice Intelligence** — Smart categorization & insights
+- **Name Resolver** — ENS/Unstoppable Domains support
+- **Cross-Chain Prep** — Chainlink CCIP framework
+- **Gasless Transactions** — Meta-transaction relay framework
+- **Encrypted Memos** — AES-GCM encrypted invoice descriptions
+- **EIP-681 Payment URIs** — QR-compatible payment links
+
+---
+
+## 🗺️ Pages & Routes
+
+| Route | Page | Description |
+|-------|------|-------------|
+| `/` | Home | Landing page with feature showcase |
+| `/dashboard` | Dashboard | Invoice management, create/view/cancel invoices |
+| `/invoice/new` | NewInvoice | Create new invoice with stealth address |
+| `/invoice/:id` | InvoiceView | View invoice details, mark as paid |
+| `/pay/:invoiceId` | PayInvoice | Pay an invoice (stealth payment flow) |
+| `/pos` | POS | Point-of-sale terminal with QR codes |
+| `/pay/pos` | POSPay | Pay via POS shared link |
+| `/escrow` | Escrow | Create and manage trustless escrows |
+| `/receipts` | Receipts | View and manage payment receipts |
+| `/verify` | VerifyReceipt | Verify on-chain receipt authenticity |
+| `/inbox` | Inbox | Stealth address inbox scanner |
+| `/analytics` | Analytics | Revenue analytics and payment trends |
+| `/features` | ProFeatures | Feature showcase (Wave 5, AI, Agents, etc.) |
+| `/security` | Security | Security architecture documentation |
+| `/legal` | Legal | Terms of service and privacy policy |
+
+---
+
+## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                  VEILGUARD WAVE 2                   │
-└─────────────────────────────────────────────────────┘
-
-┌────────────────┐      ┌──────────────────┐      ┌───────────────┐
-│   FRONTEND     │      │  SMART CONTRACTS │      │  BLOCKCHAIN   │
-│  React + Vite  │ ───> │  Solidity 0.8.24 │ ───> │    Polygon    │
-└────────────────┘      └──────────────────┘      └───────────────┘
-       │                        │                          │
-       ├─ 12 Pages              ├─ InvoiceRegistry        ├─ Mainnet (137)
-       ├─ ERC-5564 Crypto       ├─ StealthHelper          └─ Amoy (80002)
-       ├─ Blockchain Scanner    └─ ReceiptStore
-       └─ Self-Custodial Sweep
+VeilGuard/
+├── contracts/                    # Solidity smart contracts (Hardhat)
+│   ├── contracts/
+│   │   ├── InvoiceRegistry.sol   # Invoice lifecycle management
+│   │   ├── ReceiptStore.sol      # Cryptographic receipt storage
+│   │   ├── StealthHelper.sol     # ERC-5564 announcements
+│   │   ├── VeilEscrow.sol        # Trustless escrow system
+│   │   └── TestUSDC.sol          # Test token (testnet only)
+│   └── scripts/                  # Deployment scripts
+├── shared/abi/                   # Shared ABI files
+├── web/                          # React frontend (Vite + TypeScript)
+│   └── src/
+│       ├── abi/                  # Contract ABIs
+│       ├── components/           # UI components
+│       │   ├── ConnectButton     # WalletConnect integration
+│       │   ├── TokenSelector     # Multi-token dropdown
+│       │   ├── FiatOnRamp        # Fiat on-ramp modal
+│       │   ├── SharePaymentLink  # Social sharing
+│       │   ├── NetworkSwitcher   # Chain selector
+│       │   └── ui/               # shadcn/ui primitives
+│       ├── config/               # Contract addresses config
+│       ├── hooks/                # Custom React hooks
+│       ├── lib/                  # Core business logic
+│       │   ├── stealth.ts        # ERC-5564 stealth logic
+│       │   ├── contracts.ts      # Chain & token configs
+│       │   ├── receipts.ts       # Receipt operations
+│       │   ├── scanner.ts        # Inbox stealth scanner
+│       │   ├── eip681.ts         # Payment URI generation
+│       │   ├── yieldManager.ts   # Aave V3 yield routing
+│       │   ├── gasManager.ts     # Smart gas funding
+│       │   ├── analytics.ts      # Analytics engine
+│       │   ├── encryptedMemo.ts  # AES-GCM encryption
+│       │   └── ...               # More utilities
+│       ├── pages/                # Route pages (16 pages)
+│       ├── store/                # Zustand state store
+│       └── types/                # TypeScript types
+└── scripts/                      # Build utilities
 ```
-
-**Core Components:**
-
-- **InvoiceRegistry**: Invoice creation & payment tracking
-- **StealthHelper**: ERC-5564 announcement events
-- **ReceiptStore**: Cryptographic receipt commitments
-- **Frontend**: 12 pages (Home, Dashboard, Invoice, Payment, Inbox, etc.)
-- **Crypto Library**: Full ERC-5564 implementation (ECDH + HKDF)
-
----
-
-## 📜 Smart Contracts
-
-### Deployed & Verified ✅
-
-**Polygon PoS Mainnet (Chain ID: 137) - Wave 3.5:**
-
-| Contract            | Address                                                                                                                    | Status      |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **InvoiceRegistry** | [`0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB`](https://polygonscan.com/address/0xBcC00f328e4e917ED3c42f581D18C96B5c2d51eB) | ✅ Verified |
-| **StealthHelper**   | [`0xc0d83ab5D1527Ef0afe3f4E55dfa4029d5029edD`](https://polygonscan.com/address/0xc0d83ab5D1527Ef0afe3f4E55dfa4029d5029edD) | ✅ Verified |
-| **ReceiptStore**    | [`0x8E5105929f4AB691405eE1A53718de8413cA7e4C`](https://polygonscan.com/address/0x8E5105929f4AB691405eE1A53718de8413cA7e4C) | ✅ Verified |
-
-**Polygon Amoy Testnet (Chain ID: 80002):**
-
-| Contract        | Address                                      |
-| --------------- | -------------------------------------------- |
-| InvoiceRegistry | `0xfD77DCa7Fd43aDf34381fbfb987089FddF4d2282` |
-| StealthHelper   | `0xC8FFf42f4EE3D096c260C8E6CE5fC767Dbb03abc` |
-| ReceiptStore    | `0x5968f6Bd79773179453EE934193467790B9327A6` |
-
-### Contract Features
-
-**InvoiceRegistry.sol** (Wave 3.5 Enhanced)
-
-- `createInvoice()` - Create new invoice with stealth address
-- `createInvoiceWithExpiry()` - Create invoice with auto-expiration
-- `markPaid()` - Mark invoice as paid with tx hash hint
-- `getInvoice()` - Retrieve invoice details
-- Multi-token support (USDC, USDT, DAI, WETH, WPOL)
-
-**StealthHelper.sol** (ERC-5564 compliant)
-
-- `announce()` - Emit stealth address announcement event
-
-**ReceiptStore.sol** (Access Controlled)
-
-- `store()` - Store receipt commitment on-chain
-- `receiptOf()` - Public mapping for verification
-- `setAuthorizedWriter()` - Access control for receipt creation
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js v18+
-- MetaMask or Web3 wallet
-- MATIC for gas ([Polygon Faucet](https://faucet.polygon.technology))
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/mohamedwael201193/VeilGuard.git
-cd VeilGuard
-```
-
-### 2. Setup Contracts
-
-```bash
-cd contracts
-npm install
-cp .env.example .env
-# Edit .env with your PRIVATE_KEY and POLYGONSCAN_API_KEY
-npm run compile
-npm run deploy:amoy      # Deploy to testnet
-npm run verify:amoy      # Verify contracts
-```
-
-### 3. Setup Frontend
-
-```bash
-cd web
-npm install
-cp .env.example .env.local
-# Edit .env.local with contract addresses
-npm run dev              # Start at http://localhost:5173
-```
-
-### 4. Try It Out!
-
-1. Visit http://localhost:5173
-2. Connect your wallet
-3. Go to "Security" page → Generate demo keys
-4. Create an invoice
-5. Pay it from another wallet
-6. Sweep funds self-custodially
-7. Generate cryptographic receipt
-8. Verify receipt publicly
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Smart Contracts
-
-- **Solidity** ^0.8.24
-- **Hardhat** - Development environment
-- **OpenZeppelin** - Secure contract libraries
-- **Ethers.js** - Blockchain interactions
+- **Solidity** 0.8.24
+- **Hardhat** — Compilation, deployment, testing
+- **OpenZeppelin** — SafeERC20, ReentrancyGuard
 
 ### Frontend
-
-- **React 18** + **TypeScript** - Modern UI framework
-- **Vite 5** - Fast build tool
-- **wagmi v2** + **viem v2** - Web3 React hooks
-- **TanStack Router** - Type-safe routing
-- **shadcn/ui** + **Tailwind CSS** - Component library & styling
-- **Framer Motion** - Smooth animations
-- **Zustand** - State management
-- **@noble/curves** - Cryptographic primitives
-- **@web3icons/react** - Professional token icons
+- **React** 18 + **TypeScript**
+- **Vite** 5 — Build tooling (port 8080)
+- **wagmi** v2 + **viem** v2 — Web3 interactions
+- **WalletConnect** v2 — Wallet connectivity
+- **shadcn/ui** + **Tailwind CSS** 3.4 — UI framework
+- **Framer Motion** 12 — Animations
+- **Zustand** 5 — State management
+- **Sonner** — Toast notifications
+- **@noble/curves** — ERC-5564 cryptography
+- **@web3icons/react** — Token icons
+- **canvas-confetti** — Celebration effects
 
 ### Infrastructure
-
-- **Polygon PoS** - L2 blockchain (mainnet)
-- **Polygon Amoy** - Testnet environment
-- **Alchemy** - RPC provider (rate-optimized)
-- **Vercel** - Frontend deployment
-- **WalletConnect v2** - Universal wallet support
+- **Polygon Mainnet** (Chain 137) — Primary network
+- **Alchemy** — RPC provider
+- **Vercel** — Frontend hosting
+- **Aave V3** — Yield routing
 
 ---
 
-## 🗺️ Roadmap
+## 🚀 Quick Start
 
-### ✅ Wave 2 (Complete - Nov 5, 2025)
+### Prerequisites
+- Node.js 18+
+- A Polygon-compatible wallet (MetaMask, etc.)
 
-- ERC-5564 stealth addresses
-- Self-custodial sweeping
-- Cryptographic receipts
-- Inbox scanning
-- Production deployment on Polygon mainnet
+### 1. Clone & Install
 
-### ✅ Wave 3.5 (Complete - Nov 27, 2025)
+```bash
+git clone https://github.com/mohamedwael201193/VeilGuard.git
+cd VeilGuard
 
-- Multi-token support (USDC, USDT, DAI, WETH, WPOL)
-- ECIES encrypted memos
-- Aave V3 yield integration (~3-5% APY)
-- Smart gas optimization
-- Batch invoice operations (~30% gas savings)
-- Analytics dashboard with CSV export
-- ENS/Unstoppable Domains name resolution
-- Multi-vault yield routing
-- New contracts deployed to Polygon Mainnet
+# Install contract dependencies
+cd contracts && npm install
 
-### 📅 Wave 4 (Next)
+# Install web dependencies
+cd ../web && npm install
+```
 
-- zk-Receipts with Noir circuits for zero-knowledge proofs
-- AggLayer integration for cross-chain payments
-- AgentPay SDK for programmatic invoice management
-- Recurring invoices (subscription payments)
+### 2. Environment Setup
 
-### 📅 Waves 5-8 (Advanced Privacy)
+```bash
+# Contracts
+cp contracts/.env.example contracts/.env
+# Add: PRIVATE_KEY, POLYGON_RPC_URL, POLYGONSCAN_API_KEY
 
-- zk-SNARKs for amount privacy
-- Cross-chain support (Arbitrum, Optimism, Base)
-- Stealth address pooling
-- Mobile app (React Native)
+# Web
+cp web/.env.example web/.env.local
+# Add: VITE_WALLETCONNECT_PROJECT_ID, VITE_ALCHEMY_API_KEY, contract addresses
+```
 
-### 📅 Waves 9-10 (Enterprise)
+### 3. Run Development Server
 
-- Team accounts & role-based access
-- White-label solutions
-- Compliance tools (optional KYC)
+```bash
+cd web
+npm run dev
+# Opens at http://localhost:8080
+```
 
----
+### 4. Compile Contracts
 
-## 📊 Performance Metrics
+```bash
+cd contracts
+npx hardhat compile
+```
 
-| Metric                          | Value              |
-| ------------------------------- | ------------------ |
-| **Gas Cost** (complete flow)    | ~$0.006            |
-| **Invoice Creation**            | 2-3 seconds        |
-| **Inbox Scanning** (10k blocks) | ~70 seconds        |
-| **Bundle Size**                 | 911 KB (optimized) |
-| **Page Load**                   | 1.2-1.8 seconds    |
-| **Security Vulnerabilities**    | 0                  |
+### 5. Deploy Contracts
 
----
+```bash
+# Polygon Mainnet
+npx hardhat run --network polygon scripts/deploy.js
 
-## � Security
-
-- ✅ **Immutable Contracts**: No upgradability, no admin keys
-- ✅ **Auditable Code**: Open source on GitHub
-- ✅ **Verified Contracts**: All 3 verified on PolygonScan
-- ✅ **Client-Side Keys**: Private keys never leave browser
-- ✅ **Session Storage**: Keys cleared on page close
-- ✅ **No Backend**: Fully decentralized, no server to hack
-
-**⚠️ User Responsibilities:**
-
-- Backup private keys securely
-- Verify stealth addresses before payment
-- Check transaction details carefully
+# Escrow
+npx hardhat run --network polygon scripts/deployEscrow.js
+```
 
 ---
 
-## 📚 Resources
+## 🔒 Environment Variables
 
-- **ERC-5564 Spec**: https://eips.ethereum.org/EIPS/eip-5564
-- **EIP-681 Payment URIs**: https://eips.ethereum.org/EIPS/eip-681
-- **Polygon Docs**: https://docs.polygon.technology/
-- **Polygon Faucet**: https://faucet.polygon.technology
-- **PolygonScan**: https://polygonscan.com
+### contracts/.env
+```
+PRIVATE_KEY=           # Deployer private key
+POLYGON_RPC_URL=       # Alchemy/Infura Polygon RPC
+POLYGONSCAN_API_KEY=   # For contract verification
+```
 
----
-
-## � License
-
-MIT License - See [LICENSE](./LICENSE) file for details.
-
----
-
-## 🤝 Contributing
-
-VeilGuard is open for contributions!
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### web/.env.local
+```
+VITE_CHAIN_DEFAULT=137
+VITE_WALLETCONNECT_PROJECT_ID=
+VITE_ALCHEMY_API_KEY=
+VITE_STEALTH_MODE=spec
+VITE_INVOICE_REGISTRY_137=0x241D6923036aD1888734ca6C0E5DEdDC044CF1FC
+VITE_STEALTH_HELPER_137=0x25A435D4bfF2729639C2937854372Ba099F4bf42
+VITE_RECEIPT_STORE_137=0x24DcE95d6DcC3101256B787a6c19569672260B5E
+VITE_ESCROW_137=0x4675f8567d1D6236F76Fe48De2450D5599156af1
+```
 
 ---
 
-## 📞 Contact & Support
+## 📜 License
 
-**Developer:** Mohamed Wael  
-**Email:** mohamedwael201193@gmail.com  
-**GitHub:** [@mohamedwael201193](https://github.com/mohamedwael201193)
-
----
-
-**Built with 💚 for Web3 Privacy**  
-**VeilGuard: Privacy by design, transparency by choice.**
+MIT — Built for the Polygon ecosystem.

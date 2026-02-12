@@ -1,36 +1,56 @@
 # Dependencies
 node_modules
 
-# Environment variables
+# Environment variables (SENSITIVE - NEVER COMMIT)
 .env
+.env.local
+.env.production
+.env.development
+.env.staging
 web/.env
 web/.env.local
+web/.env.production
+web/.env.development
 contracts/.env
+contracts/.env.local
+*.env
 
 # Build artifacts
 contracts/artifacts
 contracts/cache
+web/dist
+web/dist-ssr
 
 # System files
 .DS_Store
+Thumbs.db
+desktop.ini
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # Editor directories
 .vscode/*
 !.vscode/tasks.json
 .idea
 
+# Private keys / wallets
+*.pem
+*.key
+*.p12
+*.keystore
+
 # Misc
 *.swp
 *.swo
 *~
+*.local
 
-# Documentation (internal)
+# Documentation (internal only)
 docs/
 DEPLOYMENT_CHECKLIST.md
 VERCEL_DEPLOYMENT.md
@@ -39,3 +59,4 @@ AKINDO_WAVE_SUBMISSION.txt
 
 # Keep these visible
 !WAVE2_COMPLETE_DOCUMENTATION.md
+!WAVE3_DOCUMENTATION.md

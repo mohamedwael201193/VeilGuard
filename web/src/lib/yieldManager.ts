@@ -444,10 +444,10 @@ export interface YieldVault {
 // Protocol addresses on Polygon mainnet
 const PROTOCOL_ADDRESSES = {
   aave: AAVE_V3_POOL_POLYGON as Address,
-  // Morpho Blue on Polygon (when available)
+  // Morpho Blue on Polygon — not yet deployed, skip gracefully
   morpho: "0x0000000000000000000000000000000000000000" as Address,
-  // Compound V3 USDC on Polygon (when available)
-  compound: "0x0000000000000000000000000000000000000000" as Address,
+  // Compound V3 (Comet) USDC market on Polygon
+  compound: "0xF25212E676D1F7F89Cd72fFEe66158f541246445" as Address,
 };
 
 /**
@@ -481,24 +481,27 @@ export async function compareYieldVaults(
     console.warn("Aave APY fetch failed:", e);
   }
 
-  // Morpho placeholder (when available on Polygon)
-  // Typically offers higher APY with matched lending
-  vaults.push({
-    protocol: "morpho",
-    name: "Morpho Blue",
-    address: PROTOCOL_ADDRESSES.morpho,
-    apy: 0, // Would fetch from Morpho API
-    riskScore: 3,
-  });
+  // Morpho — skip if zero address (not yet on Polygon)
+  if (PROTOCOL_ADDRESSES.morpho !== "0x0000000000000000000000000000000000000000") {
+    vaults.push({
+      protocol: "morpho",
+      name: "Morpho Blue",
+      address: PROTOCOL_ADDRESSES.morpho,
+      apy: 0,
+      riskScore: 3,
+    });
+  }
 
-  // Compound placeholder (when available on Polygon)
-  vaults.push({
-    protocol: "compound",
-    name: "Compound V3",
-    address: PROTOCOL_ADDRESSES.compound,
-    apy: 0, // Would fetch from Compound API
-    riskScore: 2,
-  });
+  // Compound V3 — include if address is set
+  if (PROTOCOL_ADDRESSES.compound !== "0x0000000000000000000000000000000000000000") {
+    vaults.push({
+      protocol: "compound",
+      name: "Compound V3",
+      address: PROTOCOL_ADDRESSES.compound,
+      apy: 0, // Would fetch from Compound Comet API
+      riskScore: 2,
+    });
+  }
 
   // Sort by APY descending
   return vaults

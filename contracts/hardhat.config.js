@@ -12,8 +12,7 @@ module.exports = {
       url: process.env.POLYGON_RPC, 
       accounts: pk, 
       chainId: 137,
-      gasPrice: 50000000000, // 50 gwei - higher priority
-      timeout: 120000 // 2 minute timeout
+      timeout: 300000, // 5 minute timeout
     },
   },
   etherscan: { apiKey: process.env.POLYGONSCAN_API_KEY },
