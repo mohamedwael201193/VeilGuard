@@ -4,8 +4,6 @@
  * All operations are client-side only - keys never leave the browser
  */
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -182,7 +180,6 @@ export default function Security() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto py-12 px-4 max-w-4xl">
         <Card>
           <CardHeader>
@@ -543,7 +540,6 @@ export default function Security() {
           </CardContent>
         </Card>
       </div>
-      <Footer />
     </>
   );
 }

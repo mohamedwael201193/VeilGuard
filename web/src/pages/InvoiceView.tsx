@@ -1,6 +1,4 @@
 import InvoiceRegistryAbi from "@/abi/InvoiceRegistry.abi.json";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -489,7 +487,6 @@ export default function InvoiceView() {
   if (!invoice) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0 }}
@@ -502,7 +499,6 @@ export default function InvoiceView() {
             </p>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -594,8 +590,6 @@ export default function InvoiceView() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <motion.div
@@ -848,8 +842,6 @@ export default function InvoiceView() {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
 
       {/* Key Entry Modal for Sweep/Refund */}
       <Dialog open={showKeyModal} onOpenChange={setShowKeyModal}>

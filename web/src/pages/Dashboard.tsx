@@ -1,6 +1,4 @@
 import { InvoiceCard } from "@/components/InvoiceCard";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { StatsCard } from "@/components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -73,7 +71,6 @@ export default function Dashboard() {
   if (!isConnected) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -86,15 +83,12 @@ export default function Dashboard() {
             </p>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 space-y-8">
           {/* Header */}
@@ -314,8 +308,6 @@ export default function Dashboard() {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

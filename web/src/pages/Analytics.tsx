@@ -5,8 +5,6 @@
  * Stripe Billing-style insights for crypto invoicing
  */
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -105,8 +103,6 @@ export default function Analytics() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
-      <Header />
-
       <main className="flex-grow container mx-auto px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -378,8 +374,6 @@ export default function Analytics() {
           </div>
         </motion.div>
       </main>
-
-      <Footer />
     </div>
   );
 }

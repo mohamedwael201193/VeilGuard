@@ -5,8 +5,6 @@
  * Fully functional with real VeilEscrow contract on Polygon mainnet.
  */
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { TokenSelector, TokenBadge } from "@/components/TokenSelector";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -339,7 +337,6 @@ export default function EscrowPage() {
   if (!isConnected) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -353,14 +350,12 @@ export default function EscrowPage() {
             </p>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4 max-w-3xl space-y-6">
           {/* Title */}
@@ -709,7 +704,6 @@ export default function EscrowPage() {
           </AnimatePresence>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

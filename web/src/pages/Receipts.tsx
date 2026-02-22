@@ -1,5 +1,3 @@
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -18,8 +16,6 @@ export default function Receipts() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <motion.div
@@ -208,8 +204,6 @@ export default function Receipts() {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

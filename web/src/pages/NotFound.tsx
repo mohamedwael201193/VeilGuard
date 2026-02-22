@@ -1,5 +1,3 @@
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Shield, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
@@ -15,7 +13,6 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
       <main className="flex-1 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -36,7 +33,6 @@ const NotFound = () => {
           </Link>
         </motion.div>
       </main>
-      <Footer />
     </div>
   );
 };

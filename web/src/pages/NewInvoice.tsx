@@ -1,6 +1,4 @@
 import InvoiceRegistryAbi from "@/abi/InvoiceRegistry.abi.json";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { TokenSelector } from "@/components/TokenSelector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -318,7 +316,6 @@ export default function NewInvoice() {
   if (!isConnected) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -331,15 +328,12 @@ export default function NewInvoice() {
             </p>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 max-w-2xl">
           <motion.div
@@ -486,8 +480,6 @@ export default function NewInvoice() {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

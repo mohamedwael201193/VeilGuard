@@ -1,13 +1,9 @@
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { motion } from "framer-motion";
 import { Database, Eye, Lock, Shield } from "lucide-react";
 
 export default function Legal() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 max-w-4xl">
           <motion.div
@@ -234,8 +230,6 @@ export default function Legal() {
           </motion.div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

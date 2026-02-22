@@ -8,8 +8,6 @@
  */
 
 import { ConnectButton } from "@/components/ConnectButton";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { NetworkSwitcher } from "@/components/NetworkSwitcher";
 import { TokenBadge } from "@/components/TokenSelector";
 import { Button } from "@/components/ui/button";
@@ -105,7 +103,6 @@ export default function POSPay() {
   if (!to || !tokenAddress) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="glass p-12 rounded-2xl text-center space-y-4 max-w-md">
             <ShoppingBag className="h-12 w-12 text-red-400 mx-auto" />
@@ -115,14 +112,12 @@ export default function POSPay() {
             </p>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
       <main className="flex-1 flex items-center justify-center py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -217,7 +212,6 @@ export default function POSPay() {
           )}
         </motion.div>
       </main>
-      <Footer />
     </div>
   );
 }
