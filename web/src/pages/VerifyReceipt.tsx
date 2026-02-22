@@ -35,14 +35,14 @@ export default function VerifyReceipt() {
   const { invoiceId, txHash } = parseReceiptLink(searchParams);
 
   useEffect(() => {
-    if (invoiceId && txHash && chain?.receiptStore) {
+    if (invoiceId && chain?.receiptStore) {
       verifyReceipt();
     }
-  }, [invoiceId, txHash, chainId]);
+  }, [invoiceId, chainId]);
 
   const verifyReceipt = async () => {
-    if (!invoiceId || !txHash) {
-      setError("Missing invoice ID or transaction hash");
+    if (!invoiceId) {
+      setError("Missing invoice ID");
       return;
     }
 
@@ -71,7 +71,7 @@ export default function VerifyReceipt() {
     }
   };
 
-  if (!invoiceId || !txHash) {
+  if (!invoiceId) {
     return (
       <div className="container mx-auto py-12 px-4 max-w-2xl">
         <Card>
@@ -87,7 +87,7 @@ export default function VerifyReceipt() {
           <CardContent>
             <Alert variant="destructive">
               <AlertDescription>
-                This link is missing required parameters (invoiceId and txHash).
+                This link is missing the required invoiceId parameter.
                 Please check the link and try again.
               </AlertDescription>
             </Alert>
@@ -168,9 +168,10 @@ export default function VerifyReceipt() {
                       ✅ Receipt Verified Successfully
                     </span>
                     <p className="text-sm text-muted-foreground mt-1">
-                      This invoice payment has been cryptographically proven and
-                      recorded on-chain. The commitment hash matches the stored
-                      value in the ReceiptStore contract.
+                      This invoice payment has been cryptographically recorded
+                      on-chain by the InvoiceRegistry contract when it was
+                      marked as paid. The receipt commitment exists in the
+                      ReceiptStore contract.
                     </p>
                   </AlertDescription>
                 </Alert>
@@ -197,15 +198,7 @@ export default function VerifyReceipt() {
                 <div className="mt-3 space-y-2 text-xs">
                   <div>
                     <p className="text-muted-foreground mb-1">
-                      Computed Commitment
-                    </p>
-                    <code className="bg-background px-2 py-1 rounded break-all block">
-                      {result.computedCommitment}
-                    </code>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground mb-1">
-                      Stored Commitment (On-Chain)
+                      On-Chain Receipt Hash (ReceiptStore)
                     </p>
                     <code className="bg-background px-2 py-1 rounded break-all block">
                       {result.storedCommitment}
@@ -216,7 +209,10 @@ export default function VerifyReceipt() {
                       Verification Method
                     </p>
                     <p>
-                      keccak256(invoiceId || txHash) == receiptOf[invoiceId]
+                      receiptOf[invoiceId] != 0x000...000
+                    </p>
+                    <p className="text-muted-foreground mt-1">
+                      Stored by InvoiceRegistry.markPaid() as keccak256(abi.encode(invoiceId, token, amount, payer, timestamp))
                     </p>
                   </div>
                 </div>
@@ -249,11 +245,12 @@ export default function VerifyReceipt() {
           {/* Explainer */}
           <Alert>
             <AlertDescription className="text-xs">
-              <strong>How it works:</strong> When a merchant creates a receipt,
-              a commitment hash (keccak256 of invoice ID + payment transaction)
-              is stored on-chain. Anyone with the invoice ID and transaction
-              hash can verify the payment occurred without revealing the stealth
-              address or payer identity.
+              <strong>How it works:</strong> When a payer marks an invoice as
+              paid via InvoiceRegistry, the contract automatically creates a
+              cryptographic receipt — a keccak256 hash of the invoice ID, token,
+              amount, payer address, and timestamp — stored in the on-chain
+              ReceiptStore. Anyone with the invoice ID can verify the payment
+              occurred without revealing the stealth address or payer identity.
             </AlertDescription>
           </Alert>
         </CardContent>

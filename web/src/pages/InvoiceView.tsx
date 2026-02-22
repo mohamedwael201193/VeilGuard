@@ -19,8 +19,7 @@ import {
 } from "@/lib/eip681";
 import {
   generateReceiptLink,
-  makeCommitment,
-  storeCommitment,
+  verifyCommitmentOnChain,
 } from "@/lib/receipts";
 import { deriveStealthPriv, refundUsdc, sweepUsdc } from "@/lib/sweeper";
 import { usePaymentDetection } from "@/lib/usePaymentWatcher";
@@ -363,27 +362,21 @@ export default function InvoiceView() {
   };
 
   const handleCreateReceipt = async () => {
-    if (!invoice.txHash) {
-      toast.error("No transaction hash available for this invoice");
-      return;
-    }
-
-    if (!walletClient) {
-      toast.error("Please connect your wallet");
+    if (!invoice?.onChainInvoiceId && !invoice?.txHash) {
+      toast.error("No on-chain invoice ID available");
       return;
     }
 
     setIsCreatingReceipt(true);
 
     try {
-      toast.loading("Creating on-chain receipt...", { id: "receipt" });
+      toast.loading("Checking on-chain receipt...", { id: "receipt" });
 
       const chainConfig = getChainConfig(chainId);
       if (!chainConfig?.receiptStore) {
         throw new Error("ReceiptStore not configured");
       }
 
-      // Get the actual on-chain invoice ID
       const invoiceIdBytes = (invoice.onChainInvoiceId ||
         invoice.txHash) as `0x${string}`;
 
@@ -392,85 +385,37 @@ export default function InvoiceView() {
         invoiceIdBytes ===
           "0x0000000000000000000000000000000000000000000000000000000000000000"
       ) {
+        throw new Error("Invoice ID not available. Please ensure the invoice has been created on-chain.");
+      }
+
+      // InvoiceRegistry.markPaid() already stored the commitment — just READ it.
+      // Do NOT call store() — it would fail with "receipt exists".
+      const verification = await verifyCommitmentOnChain(
+        chainId,
+        chainConfig.receiptStore as `0x${string}`,
+        invoiceIdBytes
+      );
+
+      if (!verification.valid) {
         throw new Error(
-          "Invoice ID not available. Please ensure the invoice has been created on-chain."
+          "Receipt not yet on-chain. Make sure the invoice has been marked as paid on-chain first."
         );
       }
 
-      // Create commitment
-      const commitment = makeCommitment(
-        invoiceIdBytes,
-        invoice.txHash as `0x${string}`
-      );
+      setReceiptCommitment(verification.storedCommitment);
 
-      setReceiptCommitment(commitment);
-
-      // Store on-chain with retry for rate limiting
-      let hash;
-      let retries = 0;
-      const maxRetries = 2;
-
-      while (retries <= maxRetries) {
-        try {
-          hash = await storeCommitment({
-            chainId,
-            receiptStoreAddress: chainConfig.receiptStore as `0x${string}`,
-            invoiceId: invoiceIdBytes,
-            commitment,
-            walletClient,
-            account: address,
-          });
-          break; // Success, exit loop
-        } catch (err: any) {
-          const isRateLimited =
-            err.message?.includes("rate limit") ||
-            err.message?.includes("too many requests");
-
-          if (isRateLimited && retries < maxRetries) {
-            retries++;
-            toast.loading(
-              `Rate limited. Retrying in 3 seconds... (${retries}/${maxRetries})`,
-              {
-                id: "receipt",
-              }
-            );
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-          } else {
-            throw err; // Re-throw if not rate limit or max retries reached
-          }
-        }
-      }
-
-      // Generate shareable link
+      // Generate shareable link — use invoiceId + txHash for display on verify page
       const link = generateReceiptLink(
         invoiceIdBytes,
-        invoice.txHash as `0x${string}`
+        (invoice.txHash || invoiceIdBytes) as `0x${string}`
       );
       setReceiptLink(link);
 
-      toast.success("Receipt created on-chain!", { id: "receipt" });
+      toast.success("Receipt verified on-chain!", { id: "receipt" });
       setShowReceiptModal(true);
     } catch (error: any) {
       console.error("Receipt error:", error);
-
-      // Better error message for rate limiting
-      const isRateLimited =
-        error.message?.includes("rate limit") ||
-        error.message?.includes("too many requests");
-
-      if (isRateLimited) {
-        toast.error(
-          "Rate limited by RPC. Please wait 30 seconds and try again.",
-          {
-            id: "receipt",
-            duration: 5000,
-          }
-        );
-      } else {
-        toast.error(error.message || "Failed to create receipt", {
-          id: "receipt",
-        });
-      }
+      toast.error(error.message || "Failed to load receipt", { id: "receipt" });
     } finally {
       setIsCreatingReceipt(false);
     }
@@ -785,12 +730,12 @@ export default function InvoiceView() {
                         {isCreatingReceipt ? (
                           <>
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Creating...
+                            Checking...
                           </>
                         ) : (
                           <>
                             <Receipt className="h-4 w-4 mr-2" />
-                            Create On-Chain Receipt
+                            Get On-Chain Receipt
                           </>
                         )}
                       </Button>
