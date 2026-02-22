@@ -45,17 +45,27 @@ export async function storeCommitment({
   invoiceId,
   commitment,
   walletClient,
+  account,
 }: {
   chainId: number;
   receiptStoreAddress: Address;
   invoiceId: `0x${string}`;
   commitment: `0x${string}`;
   walletClient: any; // WalletClient from wagmi
+  account?: `0x${string}`;
 }): Promise<`0x${string}`> {
   const chain = CHAINS[chainId];
   if (!chain) {
     throw new Error(`Unsupported chain: ${chainId}`);
   }
+
+  const alchemyKey = import.meta.env.VITE_ALCHEMY_API_KEY || '';
+  const viemChain = {
+    id: 137,
+    name: "Polygon",
+    nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
+    rpcUrls: { default: { http: [`https://polygon-mainnet.g.alchemy.com/v2/${alchemyKey}`] } },
+  };
 
   const receiptStoreAbi = parseAbi([
     "function store(bytes32 invoiceId, bytes32 receiptHash) external",
@@ -66,7 +76,9 @@ export async function storeCommitment({
     abi: receiptStoreAbi,
     functionName: "store",
     args: [invoiceId, commitment],
-    gas: 100000n,
+    chain: viemChain,
+    account,
+    gas: 150000n,
   });
 
   return hash;
@@ -117,7 +129,7 @@ export async function verifyCommitmentOnChain(
 
   const publicClient = createPublicClient({
     chain: chainConfig,
-    transport: http(),
+    transport: http(rpcUrl),
   });
 
   const receiptStoreAbi = parseAbi([
@@ -130,7 +142,6 @@ export async function verifyCommitmentOnChain(
     abi: receiptStoreAbi,
     functionName: "receiptOf",
     args: [invoiceId],
-    authorizationList: undefined,
   })) as `0x${string}`;
 
   // Compute expected commitment

@@ -418,6 +418,7 @@ export default function InvoiceView() {
             invoiceId: invoiceIdBytes,
             commitment,
             walletClient,
+            account: address,
           });
           break; // Success, exit loop
         } catch (err: any) {
