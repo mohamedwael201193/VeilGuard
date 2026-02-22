@@ -81,6 +81,10 @@ export default function InvoiceView() {
   );
   const [receiptLink, setReceiptLink] = useState<string | null>(null);
 
+  // Mark as Paid modal state
+  const [showMarkPaidModal, setShowMarkPaidModal] = useState(false);
+  const [markPaidTxHash, setMarkPaidTxHash] = useState("");
+
   // Use refs to store keys in memory only (never persisted)
   const keysRef = useRef<{ spend: string; view: string } | null>(null);
 
@@ -129,36 +133,40 @@ export default function InvoiceView() {
       return;
     }
 
+    // Pre-fill tx hash from localStorage if available
+    const invoiceKey = `invoice_payment_${invoice.id}`;
+    const storedPayment = localStorage.getItem(invoiceKey);
+    let suggestedTxHash = "";
+
+    if (storedPayment) {
+      try {
+        const payment = JSON.parse(storedPayment);
+        suggestedTxHash = payment.txHash || "";
+      } catch (e) {
+        console.error("Error parsing stored payment:", e);
+      }
+    }
+
+    setMarkPaidTxHash(suggestedTxHash);
+    setShowMarkPaidModal(true);
+  };
+
+  const handleConfirmMarkPaid = async () => {
+    if (!invoice || !walletClient || !address) return;
+
+    const txHash = markPaidTxHash.trim();
+    if (!txHash || !txHash.startsWith("0x")) {
+      toast.error("Please enter a valid transaction hash starting with 0x");
+      return;
+    }
+
+    const chainConfig = getChainConfig(chainId);
+    if (!chainConfig) return;
+
+    setShowMarkPaidModal(false);
     setIsMarking(true);
 
     try {
-      // Try to get stored payment tx hash from localStorage
-      const invoiceKey = `invoice_payment_${invoice.id}`;
-      const storedPayment = localStorage.getItem(invoiceKey);
-      let suggestedTxHash = "";
-
-      if (storedPayment) {
-        try {
-          const payment = JSON.parse(storedPayment);
-          suggestedTxHash = payment.txHash || "";
-        } catch (e) {
-          console.error("Error parsing stored payment:", e);
-        }
-      }
-
-      // Prompt user for transaction hash with auto-filled value if available
-      const txHash = prompt(
-        "Enter the payment transaction hash (0x...):" +
-          (suggestedTxHash ? `\n\nAuto-detected: ${suggestedTxHash}` : ""),
-        suggestedTxHash
-      );
-
-      if (!txHash || !txHash.startsWith("0x")) {
-        toast.error("Invalid transaction hash");
-        setIsMarking(false);
-        return;
-      }
-
       toast.loading("Marking invoice as paid...", { id: "mark-paid" });
 
       // Use the on-chain invoice ID if available, otherwise fall back to tx hash
@@ -173,6 +181,7 @@ export default function InvoiceView() {
       const tokenConfig = chainConfig.tokens.find(
         (t) => t.symbol === invoice.token
       );
+
       if (!tokenConfig) {
         throw new Error("Token configuration not found");
       }
@@ -833,6 +842,73 @@ export default function InvoiceView() {
           </motion.div>
         </div>
       </main>
+
+      {/* Mark as Paid Modal */}
+      <Dialog open={showMarkPaidModal} onOpenChange={setShowMarkPaidModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Mark Invoice as Paid
+            </DialogTitle>
+            <DialogDescription>
+              Confirm the payment by providing the transaction hash from the
+              blockchain.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {markPaidTxHash && (
+              <div className="flex items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-primary">
+                    Payment auto-detected
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1 break-all font-mono">
+                    {markPaidTxHash}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="txHashInput" className="text-sm font-medium">
+                Transaction Hash
+              </Label>
+              <Input
+                id="txHashInput"
+                placeholder="0x..."
+                value={markPaidTxHash}
+                onChange={(e) => setMarkPaidTxHash(e.target.value)}
+                className="font-mono text-sm"
+              />
+              <p className="text-xs text-muted-foreground">
+                The on-chain transaction hash of the USDC payment to the stealth
+                address.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setShowMarkPaidModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1 bg-primary hover:bg-primary/90"
+              onClick={handleConfirmMarkPaid}
+              disabled={!markPaidTxHash || !markPaidTxHash.startsWith("0x")}
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Confirm &amp; Mark Paid
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Key Entry Modal for Sweep/Refund */}
       <Dialog open={showKeyModal} onOpenChange={setShowKeyModal}>
