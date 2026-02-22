@@ -30,10 +30,7 @@ export async function getCurrentGasPrice(chainId: number): Promise<bigint> {
   if (!chain) throw new Error(`Unsupported chain: ${chainId}`);
 
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  const rpcUrl =
-    chainId === 80002
-      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  const rpcUrl = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
     chain: {
@@ -63,10 +60,7 @@ export async function getNativeBalance(
   if (!chain) throw new Error(`Unsupported chain: ${chainId}`);
 
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  const rpcUrl =
-    chainId === 80002
-      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  const rpcUrl = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
     chain: {

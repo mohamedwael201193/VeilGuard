@@ -186,22 +186,13 @@ export default function InvoiceView() {
       // Use the provided transaction hash
       const txHashHint = txHash as `0x${string}`;
 
-      const chain =
-        chainId === 137
-          ? {
-              id: 137,
-              name: "Polygon",
-              nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
-              rpcUrls: { default: { http: ["https://polygon-rpc.com"] } },
-            }
-          : {
-              id: 80002,
-              name: "Polygon Amoy",
-              nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-              rpcUrls: {
-                default: { http: ["https://rpc-amoy.polygon.technology"] },
-              },
-            };
+      const alchemyKey = import.meta.env.VITE_ALCHEMY_API_KEY || '';
+      const chain = {
+        id: 137,
+        name: "Polygon",
+        nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
+        rpcUrls: { default: { http: [`https://polygon-mainnet.g.alchemy.com/v2/${alchemyKey}`] } },
+      };
 
       const hash = await walletClient.writeContract({
         address: chainConfig.invoiceRegistry as `0x${string}`,

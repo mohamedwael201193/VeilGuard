@@ -1,9 +1,12 @@
 import { http, createConfig } from 'wagmi';
-import { polygon, polygonAmoy } from 'wagmi/chains';
+import { polygon } from 'wagmi/chains';
 import { injected, walletConnect } from 'wagmi/connectors';
 
-// Configure chains
-export const chains = [polygon, polygonAmoy] as const;
+const alchemyKey = import.meta.env.VITE_ALCHEMY_API_KEY || '';
+export const ALCHEMY_RPC = `https://polygon-mainnet.g.alchemy.com/v2/${alchemyKey}`;
+
+// Configure chains — Polygon mainnet only
+export const chains = [polygon] as const;
 
 // Wagmi configuration
 export const config = createConfig({
@@ -15,7 +18,6 @@ export const config = createConfig({
     }),
   ],
   transports: {
-    [polygon.id]: http(),
-    [polygonAmoy.id]: http(),
+    [polygon.id]: http(ALCHEMY_RPC),
   },
 });

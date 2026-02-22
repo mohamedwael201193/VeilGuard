@@ -38,9 +38,7 @@ const TOKEN_DECIMALS: Record<string, number> = {
  */
 function getRpcUrl(chainId: number): string {
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  return chainId === 80002
-    ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-    : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  return `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 }
 
 /**

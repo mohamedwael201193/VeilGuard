@@ -22,7 +22,7 @@ export const SUPPORTED_CHAINS = {
     layerZeroId: 109,
     color: "#8247E5",
     nativeCurrency: "POL",
-    rpcUrl: "https://polygon-rpc.com",
+    rpcUrl: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_API_KEY || ''}`,
   },
   ETHEREUM: {
     id: 1,

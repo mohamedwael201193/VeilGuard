@@ -40,7 +40,7 @@ export interface GasSavingsEstimate {
  * Create multiple invoices in sequence
  * Gas-efficient for merchants creating bulk invoices
  *
- * @param chainId - Chain ID (137 for mainnet, 80002 for testnet)
+ * @param chainId - Chain ID (137 for Polygon mainnet)
  * @param walletClient - Wallet client with connected account
  * @param invoices - Array of invoice inputs
  * @returns Batch result with hashes and any errors

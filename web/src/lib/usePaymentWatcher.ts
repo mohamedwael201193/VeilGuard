@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPublicClient, formatUnits, Hex, http, parseAbiItem } from "viem";
-import { polygon, polygonAmoy } from "viem/chains";
+import { polygon } from "viem/chains";
 
 const transferEvent = parseAbiItem(
   "event Transfer(address indexed from, address indexed to, uint256 value)"
@@ -21,15 +21,11 @@ export function watchUsdcPayment({
   chainId?: number;
   onDetect: (log: { txHash: Hex; value: bigint; from: string }) => void;
 }) {
-  const chain = chainId === 80002 ? polygonAmoy : polygon;
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  const rpc =
-    chainId === 80002
-      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  const rpc = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
-    chain,
+    chain: polygon,
     transport: http(rpc),
   });
 

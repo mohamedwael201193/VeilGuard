@@ -9,29 +9,20 @@ export async function announceStealth(
   stealthAddress: `0x${string}`,
   ephemeralPubKey: `0x${string}`,
   metadata: `0x${string}`,
-  chainId: number = 80002,
+  chainId: number = 137,
   walletClient: any
 ) {
   if (!walletClient) throw new Error("Wallet client required");
 
   try {
     // Define chain for the transaction
-    const chain =
-      chainId === 137
-        ? {
-            id: 137,
-            name: "Polygon",
-            nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
-            rpcUrls: { default: { http: ["https://polygon-rpc.com"] } },
-          }
-        : {
-            id: 80002,
-            name: "Polygon Amoy",
-            nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
-            rpcUrls: {
-              default: { http: ["https://rpc-amoy.polygon.technology"] },
-            },
-          };
+    const { ALCHEMY_RPC } = await import('./wagmi');
+    const chain = {
+      id: 137,
+      name: "Polygon",
+      nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
+      rpcUrls: { default: { http: [ALCHEMY_RPC] } },
+    };
 
     // Call the contract with explicit gas limit
     const hash = await walletClient.writeContract({

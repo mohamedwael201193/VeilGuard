@@ -80,7 +80,7 @@ export default function PayInvoice() {
         return;
       }
 
-      const parsedChainId = invoiceChainId ? parseInt(invoiceChainId) : 80002;
+      const parsedChainId = invoiceChainId ? parseInt(invoiceChainId) : 137;
       const { symbol, decimals } = getTokenSymbol(parsedChainId, token);
       const expiresAt = expiresAtStr ? parseInt(expiresAtStr) : undefined;
 
@@ -277,7 +277,7 @@ export default function PayInvoice() {
                 <span className="text-gray-400">Transaction</span>
                 <a
                   href={`https://${
-                    invoiceData.chainId === 80002 ? "amoy." : ""
+                    ""
                   }polygonscan.com/tx/${txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -385,7 +385,7 @@ export default function PayInvoice() {
         ) : chainId !== invoiceData.chainId ? (
           <div className="text-center">
             <p className="text-yellow-400 mb-4">
-              ⚠️ Please switch to Polygon Amoy network
+              ⚠️ Please switch to Polygon network
             </p>
             <NetworkSwitcher />
           </div>

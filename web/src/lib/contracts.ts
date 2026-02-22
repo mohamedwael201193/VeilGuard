@@ -77,37 +77,7 @@ export const CHAINS: Record<number, ChainConfig> = {
       "0x0000000000000000000000000000000000000000",
     explorer: "https://polygonscan.com",
   },
-  80002: {
-    id: 80002,
-    name: "Polygon Amoy",
-    tokens: [
-      {
-        symbol: "tUSDC",
-        address: "0x3156F6E761D7c9dA0a88A6165864995f2b58854f",
-        decimals: 6,
-      },
-      {
-        symbol: "tUSDT",
-        address: "0x1616e4F05b7D55f28F5D56E42c9d5e0b4b01c7F4",
-        decimals: 6,
-      },
-      {
-        symbol: "tDAI",
-        address: "0x8cE6C83B7D06Db3E35a7cf15f4A6E3F8f7e8E9D7",
-        decimals: 18,
-      },
-    ],
-    invoiceRegistry:
-      import.meta.env.VITE_INVOICE_REGISTRY_80002 ||
-      "0x0000000000000000000000000000000000000000",
-    stealthHelper:
-      import.meta.env.VITE_STEALTH_HELPER_80002 ||
-      "0x0000000000000000000000000000000000000000",
-    receiptStore:
-      import.meta.env.VITE_RECEIPT_STORE_80002 ||
-      "0x0000000000000000000000000000000000000000",
-    explorer: "https://amoy.polygonscan.com",
-  },
+
 };
 
 export const DEFAULT_CHAIN_ID =

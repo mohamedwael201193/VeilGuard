@@ -52,10 +52,7 @@ export async function getAnnouncements(
 
   // Use Alchemy RPC for better block range support
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  const rpcUrl =
-    chainId === 80002
-      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  const rpcUrl = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
     chain: {
@@ -71,7 +68,7 @@ export async function getAnnouncements(
         },
       },
     },
-    transport: http(),
+    transport: http(rpcUrl),
   });
 
   // Get latest block for range calculation
@@ -250,10 +247,7 @@ export async function getIncomingTransfers(
 
   // Use Alchemy RPC for better block range support
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  const rpcUrl =
-    chainId === 80002
-      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  const rpcUrl = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const client = createPublicClient({
     chain: {
@@ -269,7 +263,7 @@ export async function getIncomingTransfers(
         },
       },
     },
-    transport: http(),
+    transport: http(rpcUrl),
   });
 
   // Get latest block for range calculation

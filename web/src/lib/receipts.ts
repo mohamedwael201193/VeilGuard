@@ -99,10 +99,7 @@ export async function verifyCommitmentOnChain(
 
   // Use Alchemy RPC for reliable access
   const apiKey = import.meta.env.VITE_ALCHEMY_API_KEY || "";
-  const rpcUrl =
-    chainId === 80002
-      ? `https://polygon-amoy.g.alchemy.com/v2/${apiKey}`
-      : `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
+  const rpcUrl = `https://polygon-mainnet.g.alchemy.com/v2/${apiKey}`;
 
   const chainConfig = {
     id: chain.id,
