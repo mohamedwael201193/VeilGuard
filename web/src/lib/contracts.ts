@@ -75,6 +75,24 @@ export const CHAINS: Record<number, ChainConfig> = {
     receiptStore:
       import.meta.env.VITE_RECEIPT_STORE_137 ||
       "0x0000000000000000000000000000000000000000",
+    escrow:
+      import.meta.env.VITE_ESCROW_137 ||
+      "0x0000000000000000000000000000000000000000",
+    subscription:
+      import.meta.env.VITE_SUBSCRIPTION_137 ||
+      "0x0000000000000000000000000000000000000000",
+    splitPay:
+      import.meta.env.VITE_SPLIT_PAY_137 ||
+      "0x0000000000000000000000000000000000000000",
+    dispute:
+      import.meta.env.VITE_DISPUTE_137 ||
+      "0x0000000000000000000000000000000000000000",
+    batchProcessor:
+      import.meta.env.VITE_BATCH_PROCESSOR_137 ||
+      "0x0000000000000000000000000000000000000000",
+    merchantIndex:
+      import.meta.env.VITE_MERCHANT_INDEX_137 ||
+      "0x0000000000000000000000000000000000000000",
     explorer: "https://polygonscan.com",
   },
 

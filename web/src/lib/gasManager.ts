@@ -16,11 +16,11 @@ import {
 import { CHAINS } from "./contracts";
 
 // Gas costs for sweep operation (transfer + overhead)
-const SWEEP_GAS_UNITS = 65000n; // ERC20 transfer ~52k + safety margin
-const GAS_BUFFER_MULTIPLIER = 1.5; // 50% buffer for gas price fluctuations
+const SWEEP_GAS_UNITS = 80000n; // ERC20 transfer ~52k + safety margin
+const GAS_BUFFER_MULTIPLIER = 4.0; // 4x buffer — covers maxFeePerGas spikes
 
-// Minimum gas to keep (avoid dust)
-const MIN_GAS_THRESHOLD = parseEther("0.001"); // 0.001 POL minimum
+// Minimum gas to send regardless of calculation (covers high gas price periods)
+const MIN_GAS_FUNDING = parseEther("0.02"); // 0.02 POL minimum floor
 
 /**
  * Get current gas price from the network
@@ -99,9 +99,11 @@ export async function calculateRequiredGas(chainId: number): Promise<{
   const requiredGas = SWEEP_GAS_UNITS * gasPrice;
 
   // Add buffer for price fluctuations
-  const recommendedFunding = BigInt(
+  const calculated = BigInt(
     Math.ceil(Number(requiredGas) * GAS_BUFFER_MULTIPLIER)
   );
+  // Always fund at least the minimum floor
+  const recommendedFunding = calculated > MIN_GAS_FUNDING ? calculated : MIN_GAS_FUNDING;
 
   return {
     gasPrice,
@@ -153,7 +155,7 @@ export async function checkGasFundingNeeded(
   const deficit = recommendedFunding - currentBalance;
 
   // Skip tiny top-ups (dust)
-  if (deficit < MIN_GAS_THRESHOLD) {
+  if (deficit < parseEther("0.001")) {
     return {
       needsFunding: false,
       currentBalance,

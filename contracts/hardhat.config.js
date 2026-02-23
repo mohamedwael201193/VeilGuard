@@ -5,7 +5,13 @@ require("dotenv").config();
 const pk = process.env.DEPLOYER_PK ? [process.env.DEPLOYER_PK] : [];
 
 module.exports = {
-  solidity: "0.8.24",
+  solidity: {
+    version: "0.8.24",
+    settings: {
+      optimizer: { enabled: true, runs: 200 },
+      viaIR: true,
+    },
+  },
   networks: {
     amoy:    { url: process.env.AMOY_RPC,    accounts: pk, chainId: 80002 },
     polygon: { 

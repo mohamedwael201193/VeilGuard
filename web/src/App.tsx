@@ -21,6 +21,9 @@ import Receipts from "./pages/Receipts";
 import Security from "./pages/Security";
 import VerifyReceipt from "./pages/VerifyReceipt";
 import EscrowPage from "./pages/EscrowPage";
+import Subscriptions from "./pages/Subscriptions";
+import SplitPay from "./pages/SplitPay";
+import Disputes from "./pages/Disputes";
 import { Footer } from "./components/layout/Footer";
 import { Header } from "./components/layout/Header";
 
@@ -51,6 +54,9 @@ const App = () => (
                 <Route path="/features" element={<ProFeatures />} />
                 <Route path="/pos" element={<POS />} />
                 <Route path="/escrow" element={<EscrowPage />} />
+                <Route path="/subscriptions" element={<Subscriptions />} />
+                <Route path="/split" element={<SplitPay />} />
+                <Route path="/disputes" element={<Disputes />} />
                 <Route path="/legal" element={<Legal />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

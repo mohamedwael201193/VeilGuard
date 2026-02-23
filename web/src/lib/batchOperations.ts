@@ -1,18 +1,20 @@
 /**
- * Batch Operations - Wave 3.5
+ * Batch Operations - Wave 3.5 + Wave 6
  *
  * Gas-optimized batch invoice operations for merchant scale
- * Aligns with judges' "low friction" and productivity themes
+ * Wave 6: On-chain batch processor via VeilBatchProcessor contract
  *
  * Features:
  * - Batch invoice creation (saves ~30% gas)
  * - Batch sweep operations
  * - Gas savings estimation
+ * - Wave 6: On-chain batch transfers via VeilBatchProcessor
  */
 
 import type { TokenConfig } from "@/types";
 import type { Address, WalletClient } from "viem";
-import { INVOICE_REGISTRY_ABI, getChainConfig } from "./contracts";
+import { INVOICE_REGISTRY_ABI, getChainConfig, ERC20_ABI } from "./contracts";
+import VeilBatchProcessorABI from "@/abi/VeilBatchProcessor.abi.json";
 
 export interface BatchInvoiceInput {
   token: TokenConfig;
@@ -275,4 +277,55 @@ export function parseBatchCSV(
   }
 
   return inputs;
+}
+
+/**
+ * Wave 6: Execute a batch token transfer through VeilBatchProcessor contract
+ * All transfers happen atomically in a single on-chain transaction
+ *
+ * @param chainId - Chain ID (137 for Polygon)
+ * @param walletClient - Wallet client
+ * @param token - ERC-20 token address
+ * @param recipients - Array of recipient addresses
+ * @param amounts - Array of amounts (in token units)
+ * @returns Transaction hash
+ */
+export async function batchTransferOnChain(
+  chainId: number,
+  walletClient: WalletClient,
+  token: Address,
+  recipients: Address[],
+  amounts: bigint[]
+): Promise<`0x${string}`> {
+  const chainConfig = getChainConfig(chainId);
+  if (!chainConfig) throw new Error("Unsupported chain");
+
+  const account = walletClient.account;
+  if (!account) throw new Error("No account connected");
+
+  const batchAddr = chainConfig.batchProcessor as Address;
+  if (!batchAddr) throw new Error("BatchProcessor not configured");
+
+  // Calculate total for approval
+  const total = amounts.reduce((sum, a) => sum + a, 0n);
+
+  // Approve batch processor
+  await walletClient.writeContract({
+    address: token,
+    abi: ERC20_ABI,
+    functionName: "approve",
+    args: [batchAddr, total],
+    account,
+    chain: null,
+  });
+
+  // Execute batch
+  return await walletClient.writeContract({
+    address: batchAddr,
+    abi: VeilBatchProcessorABI,
+    functionName: "batchTransfer",
+    args: [token, recipients, amounts],
+    account,
+    chain: null,
+  });
 }

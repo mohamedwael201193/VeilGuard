@@ -27,6 +27,9 @@ export function Header() {
     { path: "/features", label: "Features" },
     { path: "/pos", label: "POS" },
     { path: "/escrow", label: "Escrow" },
+    { path: "/subscriptions", label: "Subscriptions" },
+    { path: "/split", label: "Split Pay" },
+    { path: "/disputes", label: "Disputes" },
     { path: "/security", label: "Security" },
   ];
 

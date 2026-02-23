@@ -11,6 +11,12 @@ const names = [
   "InvoiceRegistry.sol/InvoiceRegistry.json",
   "StealthHelper.sol/StealthHelper.json",
   "ReceiptStore.sol/ReceiptStore.json",
+  "VeilEscrow.sol/VeilEscrow.json",
+  "VeilSubscription.sol/VeilSubscription.json",
+  "VeilSplitPay.sol/VeilSplitPay.json",
+  "VeilDispute.sol/VeilDispute.json",
+  "VeilBatchProcessor.sol/VeilBatchProcessor.json",
+  "VeilMerchantIndex.sol/VeilMerchantIndex.json",
 ];
 
 function ensureDir(p) { 

@@ -115,12 +115,12 @@ export async function sweepTokens({
   const walletClient = createWalletClient({
     account,
     chain: chainConfig,
-    transport: http(),
+    transport: http(getRpcUrl(chainId)),
   });
 
   const publicClient = createPublicClient({
     chain: chainConfig,
-    transport: http(),
+    transport: http(getRpcUrl(chainId)),
   });
 
   // Get balance with error handling
@@ -135,7 +135,6 @@ export async function sweepTokens({
         abi: ERC20_ABI,
         functionName: "balanceOf",
         args: [stealthAddress as Address],
-        authorizationList: undefined,
       })) as bigint;
 
       console.log("Balance:", sweepAmount.toString());
@@ -167,6 +166,7 @@ export async function sweepTokens({
     args: [MERCHANT_SAFE as Address, sweepAmount],
     account,
     chain: chainConfig,
+    gas: 100000n,
   });
 
   return hash;
@@ -223,12 +223,12 @@ export async function refundUsdc({
   const walletClient = createWalletClient({
     account,
     chain: chainConfig,
-    transport: http(),
+    transport: http(getRpcUrl(chainId)),
   });
 
   const publicClient = createPublicClient({
     chain: chainConfig,
-    transport: http(),
+    transport: http(getRpcUrl(chainId)),
   });
 
   // Get balance if amount not specified
@@ -240,7 +240,6 @@ export async function refundUsdc({
         abi: ERC20_ABI,
         functionName: "balanceOf",
         args: [account.address],
-        authorizationList: undefined,
       })) as bigint;
     } catch (error) {
       console.error("Error reading balance:", error);
@@ -266,6 +265,7 @@ export async function refundUsdc({
     args: [payerAddress, refundAmount],
     account,
     chain: chainConfig,
+    gas: 100000n,
   });
 
   return hash;
@@ -306,7 +306,7 @@ export async function getStealthBalance(
 
   const publicClient = createPublicClient({
     chain: chainConfig,
-    transport: http(),
+    transport: http(getRpcUrl(chainId)),
   });
 
   try {
@@ -315,7 +315,6 @@ export async function getStealthBalance(
       abi: ERC20_ABI,
       functionName: "balanceOf",
       args: [stealthAddress],
-      authorizationList: undefined,
     })) as bigint;
 
     return balance;

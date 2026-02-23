@@ -32,6 +32,12 @@ export interface ChainConfig {
   invoiceRegistry: string;
   stealthHelper: string;
   receiptStore: string;
+  escrow: string;
+  subscription: string;
+  splitPay: string;
+  dispute: string;
+  batchProcessor: string;
+  merchantIndex: string;
   explorer: string;
 }
 
@@ -186,4 +192,65 @@ export interface SessionKey {
   validUntil: number;
   permissions: string[];
   status: "ACTIVE" | "REVOKED" | "EXPIRED";
+}
+
+// Wave 6: On-chain Subscription
+export interface SubscriptionData {
+  id: number;
+  payer: string;
+  merchant: string;
+  token: string;
+  amount: string;
+  interval: number;
+  nextChargeAt: number;
+  totalCharged: string;
+  maxCycles: number;
+  cyclesCompleted: number;
+  status: "Active" | "Paused" | "Cancelled" | "Completed";
+  memo: string;
+  createdAt: number;
+}
+
+// Wave 6: Split Payment
+export interface SplitPaymentData {
+  id: number;
+  invoiceId: string;
+  token: string;
+  payer: string;
+  recipients: string[];
+  amounts: string[];
+  totalAmount: string;
+  executed: boolean;
+  memo: string;
+  createdAt: number;
+}
+
+// Wave 6: Dispute / Arbitration
+export interface DisputeData {
+  id: number;
+  escrowId: number;
+  buyer: string;
+  seller: string;
+  token: string;
+  amount: string;
+  arbitrator: string;
+  buyerEvidence: string;
+  sellerEvidence: string;
+  resolution: "Pending" | "BuyerWins" | "SellerWins" | "SplitDecision" | "Expired";
+  buyerPercent: number;
+  deadline: number;
+  resolved: boolean;
+  createdAt: number;
+}
+
+// Wave 6: Merchant Profile
+export interface MerchantProfile {
+  address: string;
+  name: string;
+  metadataURI: string;
+  totalInvoices: number;
+  totalPaid: number;
+  totalVolume: string;
+  registeredAt: number;
+  active: boolean;
 }
