@@ -86,8 +86,9 @@ export function Footer() {
               {[
                 { path: "/invoice/new", label: "Create Invoice" },
                 { path: "/escrow", label: "Escrow" },
+                { path: "/subscriptions", label: "Subscriptions" },
+                { path: "/split", label: "Split Pay" },
                 { path: "/pos", label: "Point of Sale" },
-                { path: "/features", label: "Pro Features" },
                 { path: "/verify", label: "Verify Receipt" },
               ].map((item) => (
                 <Link

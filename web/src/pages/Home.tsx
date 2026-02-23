@@ -69,7 +69,7 @@ export default function Home() {
             className="absolute inset-0 z-[1]"
             style={{ opacity: overlayOpacity }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/70 to-background" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-background" />
           </motion.div>
 
           {/* Noise grain */}
@@ -85,7 +85,7 @@ export default function Home() {
             >
               {/* Tag line */}
               <motion.div variants={fadeUp} custom={0} className="flex justify-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-primary/10 text-primary border border-primary/20">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wider uppercase bg-white/10 text-white border border-white/20 backdrop-blur-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                   Live on Polygon Mainnet
                 </span>
@@ -96,8 +96,9 @@ export default function Home() {
                 variants={fadeUp}
                 custom={1}
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95]"
+                style={{ textShadow: "0 2px 40px rgba(0,0,0,0.8)" }}
               >
-                Private payments
+                <span className="text-white drop-shadow-lg">Private payments</span>
                 <br />
                 <span className="text-gradient-primary">made simple.</span>
               </motion.h1>
@@ -106,10 +107,12 @@ export default function Home() {
               <motion.p
                 variants={fadeUp}
                 custom={2}
-                className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+                className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed font-medium"
+                style={{ textShadow: "0 1px 20px rgba(0,0,0,0.9)" }}
               >
-                One-time stealth address per invoice. Cryptographic receipts.
-                Trustless escrow. All on Polygon — for fractions of a cent.
+                Send and receive payments without exposing your financial history.
+                Create invoices, lock funds in escrow, split bills, and earn on idle
+                balances — all for less than a cent per transaction.
               </motion.p>
 
               {/* CTAs */}
@@ -123,11 +126,11 @@ export default function Home() {
                     <ArrowUpRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </Button>
                 </Link>
-                <Link to="/features">
+                <Link to="/dashboard">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="magnetic h-14 px-8 text-base font-semibold rounded-full glass hover:bg-white/5"
+                    className="magnetic h-14 px-8 text-base font-semibold rounded-full border-white/30 text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm"
                   >
                     Explore Features
                   </Button>
@@ -141,14 +144,14 @@ export default function Home() {
                 className="flex flex-wrap justify-center gap-8 md:gap-12 pt-6"
               >
                 {[
-                  { value: "4", label: "Contracts" },
-                  { value: "10+", label: "Tokens" },
-                  { value: "$0.006", label: "Avg Gas" },
-                  { value: "16", label: "Pages" },
+                  { value: "$0.006", label: "Per Transaction" },
+                  { value: "10+", label: "Tokens Supported" },
+                  { value: "100%", label: "Self-Custodial" },
+                  { value: "0", label: "Data Collected" },
                 ].map((s) => (
                   <div key={s.label} className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-primary">{s.value}</div>
-                    <div className="text-xs text-muted-foreground mt-1 uppercase tracking-wider">{s.label}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-primary" style={{ textShadow: "0 0 20px rgba(163,230,53,0.5)" }}>{s.value}</div>
+                    <div className="text-xs text-white/70 mt-1 uppercase tracking-wider font-medium">{s.label}</div>
                   </div>
                 ))}
               </motion.div>
@@ -193,18 +196,18 @@ export default function Home() {
                 {[
                   {
                     icon: <IconShield size={40} />,
-                    title: "Stealth Addresses",
-                    desc: "Each invoice gets a unique ERC-5564 address. Zero payment history linkage — cryptographically unlinkable.",
+                    title: "Private by Default",
+                    desc: "Every payment goes to a fresh, one-time address. Your transaction history stays invisible — no one can trace who paid whom.",
                   },
                   {
                     icon: <IconLock size={40} />,
-                    title: "Zero Knowledge",
-                    desc: "No personal data on-chain. Encrypted memos. Self-custodial keys. Your privacy, enforced by math.",
+                    title: "You Own Your Keys",
+                    desc: "No accounts, no emails, no sign-ups. You hold your funds directly. No third party can freeze or access your money.",
                   },
                   {
                     icon: <IconBolt size={40} />,
-                    title: "Instant Settlement",
-                    desc: "Polygon PoS speed at $0.006 per transaction. 10+ stablecoins supported. Real-time payment detection.",
+                    title: "Fast & Affordable",
+                    desc: "Payments confirm in seconds for under a cent. Accept USDC, USDT, MATIC, and 10+ other tokens with real-time detection.",
                   },
                 ].map((f, i) => (
                   <motion.div
@@ -240,8 +243,8 @@ export default function Home() {
                   <br />— we enforce it.
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-md">
-                  VeilGuard combines ERC-5564 stealth addresses with on-chain verification
-                  to deliver truly private commerce on Polygon.
+                  VeilGuard keeps your financial activity private by design — not by
+                  policy. No data harvesting, no surveillance, no compromises.
                 </p>
                 <Link to="/invoice/new">
                   <Button className="magnetic h-12 px-6 rounded-full bg-primary text-primary-foreground font-semibold glow-lime group">
@@ -273,7 +276,8 @@ export default function Home() {
                 <span className="text-gradient-purple">get paid</span>
               </h2>
               <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-                From invoicing to escrow, POS to analytics — all deployed on Polygon mainnet.
+                From invoicing to escrow, POS to receipts — everything your
+                business needs to get paid securely.
               </p>
             </motion.div>
 
@@ -282,29 +286,29 @@ export default function Home() {
                 {
                   icon: <IconEscrow size={36} />,
                   title: "Trustless Escrow",
-                  desc: "On-chain escrow with release, refund & dispute. No intermediaries needed.",
+                  desc: "Lock funds until work is done. Release, refund, or raise a dispute — no middleman required.",
                   href: "/escrow",
                   accent: "violet",
                 },
                 {
                   icon: <IconPOS size={36} />,
                   title: "POS Terminal",
-                  desc: "QR code payments, real-time detection, daily sales tracking & share links.",
+                  desc: "Accept crypto in person or online. Share a QR code, track daily sales, and get paid instantly.",
                   href: "/pos",
                   accent: "cyan",
                 },
                 {
                   icon: <IconReceipt size={36} />,
-                  title: "Crypto Receipts",
-                  desc: "Keccak256 commitment receipts stored on-chain. Publicly verifiable.",
+                  title: "Payment Receipts",
+                  desc: "Every payment generates a tamper-proof receipt. Share proof of payment without revealing sensitive details.",
                   href: "/receipts",
                   accent: "primary",
                 },
                 {
                   icon: <IconYield size={36} />,
-                  title: "Yield Routing",
-                  desc: "Idle funds earn APY via Aave V3. Smart vault selection, auto-compounding.",
-                  href: "/features",
+                  title: "Yield on Idle Funds",
+                  desc: "Put your unused balance to work. Automatically earn interest while waiting for invoices to settle.",
+                  href: "/dashboard",
                   accent: "primary",
                 },
               ].map((card, i) => (
@@ -358,23 +362,23 @@ export default function Home() {
               {[
                 {
                   step: "01",
-                  title: "Create Invoice",
-                  desc: "Set amount, token, and optional encrypted memo. A unique stealth address is generated using ERC-5564.",
+                  title: "Create an Invoice",
+                  desc: "Set the amount, choose a token, and add an optional private note. A fresh one-time payment address is generated automatically for the payer.",
                 },
                 {
                   step: "02",
-                  title: "Share Payment Link",
-                  desc: "Send via WhatsApp, Telegram, Email or QR code. Customer pays with any Web3 wallet. Zero PII exposed.",
+                  title: "Share the Payment Link",
+                  desc: "Send a link via WhatsApp, Telegram, Email, or QR code. The payer settles with any Web3 wallet — no personal info is shared.",
                 },
                 {
                   step: "03",
-                  title: "Sweep Funds Privately",
-                  desc: "Use your private keys to sweep from stealth address to your wallet. Fully self-custodial.",
+                  title: "Receive Funds Privately",
+                  desc: "Move the incoming payment to your main wallet at any time. Only you control when and where the funds go.",
                 },
                 {
                   step: "04",
-                  title: "Generate Receipt",
-                  desc: "Cryptographic receipt stored on-chain. Prove payment happened without revealing any details.",
+                  title: "Get a Receipt",
+                  desc: "A permanent, tamper-proof receipt is stored automatically. Share it as proof of payment without revealing private transaction details.",
                 },
               ].map((item, i) => (
                 <motion.div
@@ -412,15 +416,15 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-bold">
                 Deployed & <span className="text-gradient-primary">verified</span>
               </h2>
-              <p className="text-muted-foreground text-lg">4 smart contracts live on Polygon Mainnet</p>
+              <p className="text-muted-foreground text-lg">9 smart contracts live on Polygon Mainnet</p>
             </motion.div>
 
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { name: "InvoiceRegistry", addr: "0x241D6923036aD1888734ca6C0E5DEdDC044CF1FC", desc: "Invoice creation, batch ops, status tracking" },
-                { name: "StealthHelper", addr: "0x25A435D4bfF2729639C2937854372Ba099F4bf42", desc: "ERC-5564 stealth address announcements" },
-                { name: "ReceiptStore", addr: "0x24DcE95d6DcC3101256B787a6c19569672260B5E", desc: "On-chain cryptographic receipt storage" },
-                { name: "VeilEscrow", addr: "0x4675f8567d1D6236F76Fe48De2450D5599156af1", desc: "Trustless escrow with release/refund/dispute" },
+                { name: "InvoiceRegistry", addr: "0x241D6923036aD1888734ca6C0E5DEdDC044CF1FC", desc: "Create, pay, and track invoices on-chain" },
+                { name: "StealthHelper", addr: "0x25A435D4bfF2729639C2937854372Ba099F4bf42", desc: "Generates a private one-time address per payment" },
+                { name: "ReceiptStore", addr: "0x24DcE95d6DcC3101256B787a6c19569672260B5E", desc: "Stores tamper-proof payment receipts permanently" },
+                { name: "VeilEscrow", addr: "0x4675f8567d1D6236F76Fe48De2450D5599156af1", desc: "Lock funds safely until both parties are satisfied" },
               ].map((c, i) => (
                 <motion.a
                   key={c.name}
@@ -462,7 +466,7 @@ export default function Home() {
               className="space-y-8"
             >
               <h2 className="text-3xl md:text-4xl font-bold tracking-wide uppercase text-muted-foreground/80">
-                Built for Builders
+                Built for the Privacy-First Web3 Economy
               </h2>
 
               {/* Avatars */}
@@ -481,12 +485,12 @@ export default function Home() {
               </div>
 
               <blockquote className="max-w-2xl mx-auto font-mono text-lg md:text-xl text-foreground/80 leading-relaxed">
-                "VeilGuard solved the #1 problem in crypto payments — merchants
-                don't want their entire payment history public. Stealth addresses
-                + on-chain receipts is the answer."
+                "The #1 problem in crypto payments is that merchants don't want
+                their financial history public. Private invoices and verifiable
+                receipts are the answer."
               </blockquote>
 
-              <p className="font-semibold">Web3 Payment Builders Community</p>
+              <p className="font-semibold">Web3 Commerce — Built for Real Business</p>
             </motion.div>
           </div>
         </section>
@@ -510,7 +514,7 @@ export default function Home() {
                 Ready to go <span className="text-gradient-primary">private</span>?
               </h2>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                Create your first stealth invoice in seconds. No registration. No backend. Just you and the blockchain.
+                Send your first private invoice in seconds. No sign-up, no data collection, no third parties.
               </p>
               <div className="flex flex-wrap justify-center gap-4 pt-4">
                 <Link to="/invoice/new">
