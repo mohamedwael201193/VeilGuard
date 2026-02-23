@@ -16,7 +16,6 @@ import NotFound from "./pages/NotFound";
 import PayInvoice from "./pages/PayInvoice";
 import POS from "./pages/POS";
 import POSPay from "./pages/POSPay";
-import ProFeatures from "./pages/ProFeatures";
 import Receipts from "./pages/Receipts";
 import Security from "./pages/Security";
 import VerifyReceipt from "./pages/VerifyReceipt";
@@ -51,7 +50,6 @@ const App = () => (
                 <Route path="/inbox" element={<Inbox />} />
                 <Route path="/security" element={<Security />} />
                 <Route path="/verify" element={<VerifyReceipt />} />
-                <Route path="/features" element={<ProFeatures />} />
                 <Route path="/pos" element={<POS />} />
                 <Route path="/escrow" element={<EscrowPage />} />
                 <Route path="/subscriptions" element={<Subscriptions />} />

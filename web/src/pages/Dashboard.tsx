@@ -327,11 +327,13 @@ export default function Dashboard() {
                   <div className="grid grid-cols-2 gap-4 pt-3 border-t border-white/[0.06]">
                     <div className="p-3 rounded-lg bg-background/50 text-center">
                       <p className="text-2xl font-bold">{onChainInvoiceCount}</p>
-                      <p className="text-xs text-muted-foreground">On-Chain Invoices</p>
+                      <p className="text-xs text-muted-foreground">Indexed On-Chain</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-0.5">via MerchantIndex</p>
                     </div>
                     <div className="p-3 rounded-lg bg-background/50 text-center">
                       <p className="text-2xl font-bold">{stats.totalInvoices}</p>
-                      <p className="text-xs text-muted-foreground">Local Invoices</p>
+                      <p className="text-xs text-muted-foreground">Total Created</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-0.5">in this browser</p>
                     </div>
                   </div>
                 )}

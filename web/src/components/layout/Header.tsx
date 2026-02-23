@@ -1,9 +1,7 @@
 import { ConnectButton } from "@/components/ConnectButton";
-import { NetworkSwitcher } from "@/components/NetworkSwitcher";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowUpRight,
   Menu,
   X,
 } from "lucide-react";
@@ -24,12 +22,11 @@ export function Header() {
   const navItems = [
     { path: "/", label: "Home" },
     { path: "/dashboard", label: "Dashboard" },
-    { path: "/features", label: "Features" },
-    { path: "/pos", label: "POS" },
     { path: "/escrow", label: "Escrow" },
     { path: "/subscriptions", label: "Subscriptions" },
     { path: "/split", label: "Split Pay" },
     { path: "/disputes", label: "Disputes" },
+    { path: "/pos", label: "POS" },
     { path: "/security", label: "Security" },
   ];
 
@@ -57,20 +54,20 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0">
             {navItems.map((item) => {
               const active = isActive(item.path);
               return (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="relative px-4 py-2 text-sm font-medium transition-colors duration-200"
+                  className="relative px-3 py-2 text-[13px] font-medium transition-colors duration-200"
                 >
                   <span
                     className={
                       active
                         ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
+                        : "text-white/80 hover:text-white"
                     }
                   >
                     {item.label}
@@ -94,19 +91,8 @@ export function Header() {
           {/* Actions */}
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-3">
-              <NetworkSwitcher />
               <ConnectButton />
             </div>
-
-            <Link to="/invoice/new" className="hidden lg:block">
-              <Button
-                size="sm"
-                className="h-9 px-5 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-full glow-lime group"
-              >
-                New Invoice
-                <ArrowUpRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Button>
-            </Link>
 
             {/* Mobile Menu Button */}
             <Button
@@ -147,7 +133,7 @@ export function Header() {
                         ${
                           active
                             ? "text-primary bg-primary/[0.08]"
-                            : "text-muted-foreground hover:text-foreground hover:bg-white/[0.03]"
+                            : "text-white/80 hover:text-white hover:bg-white/[0.05]"
                         }
                       `}
                     >
@@ -157,17 +143,7 @@ export function Header() {
                 })}
               </nav>
               <div className="flex flex-col gap-3 pb-4 pt-2 border-t border-white/[0.06]">
-                <NetworkSwitcher />
                 <ConnectButton />
-                <Link to="/invoice/new" onClick={() => setMobileMenuOpen(false)}>
-                  <Button
-                    size="sm"
-                    className="w-full h-10 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-full glow-lime"
-                  >
-                    New Invoice
-                    <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-                  </Button>
-                </Link>
               </div>
             </motion.div>
           )}
