@@ -51,14 +51,14 @@ export default function Home() {
         ════════════════════════════════════════════ */}
         <section ref={heroRef} className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
           {/* Video BG */}
-          <motion.div className="absolute inset-0 z-0" style={{ scale: videoScale }}>
+          <motion.div className="absolute inset-0 z-0 bg-black" style={{ scale: videoScale }}>
             <video
               autoPlay
               muted
               loop
               playsInline
+              preload="auto"
               className="w-full h-full object-cover"
-              poster="/placeholder.svg"
             >
               <source src="/bg.mp4" type="video/mp4" />
             </video>
